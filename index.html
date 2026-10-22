@@ -1,0 +1,1527 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Potensi Bencana Alam di Indonesia - SMP Negeri 3 Pakuhaji</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome CDN for Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts Inter -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {
+                            blue: '#1E40AF',
+                            lightBlue: '#3B82F6',
+                            sky: '#E0F2FE',
+                            green: '#059669',
+                            lightGreen: '#D1FAE5',
+                            orange: '#EA580C',
+                            lightOrange: '#FFEDD5',
+                            accent: '#F59E0B'
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        /* Custom Styles & Smooth Transitions */
+        body { font-family: 'Inter', sans-serif; background-color: #f8fafc; color: #1e293b; }
+        .tab-content { display: none; }
+        .tab-content.active { display: block; animation: fadeIn 0.3s ease-in-out; }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(6px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .flip-card { perspective: 1000px; }
+        .flip-card-inner { transition: transform 0.6s; transform-style: preserve-3d; }
+        .flip-card.flipped .flip-card-inner { transform: rotateY(180deg); }
+        .flip-card-front, .flip-card-back { backface-visibility: hidden; position: absolute; top:0; left:0; width:100%; height:100%; }
+        .flip-card-back { transform: rotateY(180deg); }
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar { width: 8px; height: 8px; }
+        ::-webkit-scrollbar-track { background: #f1f5f9; }
+        ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+    </style>
+</head>
+<body class="bg-slate-50 min-h-screen flex flex-col justify-between selection:bg-brand-lightBlue selection:text-white">
+
+    <!-- TOP HEADER / BRANDING -->
+    <header class="bg-gradient-to-r from-brand-blue via-blue-700 to-indigo-900 text-white shadow-lg sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 py-3 sm:px-6 lg:px-8 flex flex-wrap justify-between items-center gap-2">
+            <div class="flex items-center space-x-3 cursor-pointer" onclick="navigateTo('beranda')">
+                <div class="bg-white p-2 rounded-xl shadow-md flex items-center justify-center text-brand-blue">
+                    <i class="fa-solid me-0 fa-graduation-cap text-2xl"></i>
+                </div>
+                <div>
+                    <h1 class="text-xs sm:text-sm font-semibold tracking-wider text-brand-sky uppercase">Kurikulum Merdeka • IPS Kelas VII</h1>
+                    <h2 class="text-base sm:text-lg font-extrabold tracking-tight">SMP NEGERI 3 PAKUHAJI</h2>
+                </div>
+            </div>
+
+            <!-- Header Action Controls -->
+            <div class="flex items-center space-x-2">
+                <button onclick="togglePresenterMode()" title="Mode Presentasi Guru" class="px-3 py-1.5 bg-white/10 hover:bg-white/20 text-xs sm:text-sm rounded-lg backdrop-blur-md transition flex items-center gap-1.5 border border-white/20">
+                    <i class="fa-solid fa-chalkboard-user text-brand-accent"></i>
+                    <span class="hidden md:inline">Mode Guru</span>
+                </button>
+                <button onclick="openModal('modalGlosarium')" class="px-3 py-1.5 bg-white/10 hover:bg-white/20 text-xs sm:text-sm rounded-lg backdrop-blur-md transition flex items-center gap-1.5 border border-white/20">
+                    <i class="fa-solid fa-book-bookmark text-green-300"></i>
+                    <span class="hidden md:inline">Glosarium</span>
+                </button>
+                <button onclick="openModal('modalDashboard')" class="px-3 py-1.5 bg-brand-orange hover:bg-orange-600 text-white font-medium text-xs sm:text-sm rounded-lg shadow transition flex items-center gap-1.5">
+                    <i class="fa-solid fa-chart-line"></i>
+                    <span>Progres Belajar</span>
+                </button>
+            </div>
+        </div>
+
+        <!-- Global Progress Bar Indicator -->
+        <div class="w-full bg-blue-950/40 h-1.5">
+            <div id="globalProgressBar" class="bg-brand-accent h-1.5 transition-all duration-500 w-0"></div>
+        </div>
+    </header>
+
+    <!-- MAIN NAVIGATION BAR -->
+    <nav class="bg-white shadow-sm border-b border-slate-200 sticky top-[61px] z-40">
+        <div class="max-w-7xl mx-auto px-2 sm:px-6 lg:px-8 overflow-x-auto">
+            <div class="flex space-x-1 sm:space-x-4 py-2 min-w-max text-xs sm:text-sm font-medium text-slate-600">
+                <button onclick="navigateTo('beranda')" id="nav-beranda" class="nav-btn px-3 py-2 rounded-lg transition flex items-center gap-2 hover:bg-slate-100">
+                    <i class="fa-solid fa-house"></i> Beranda
+                </button>
+                <button onclick="navigateTo('tujuan')" id="nav-tujuan" class="nav-btn px-3 py-2 rounded-lg transition flex items-center gap-2 hover:bg-slate-100">
+                    <i class="fa-solid fa-bullseye text-red-500"></i> Tujuan
+                </button>
+                <button onclick="navigateTo('apersepsi')" id="nav-apersepsi" class="nav-btn px-3 py-2 rounded-lg transition flex items-center gap-2 hover:bg-slate-100">
+                    <i class="fa-solid fa-lightbulb text-amber-500"></i> Apersepsi
+                </button>
+                <button onclick="navigateTo('materi')" id="nav-materi" class="nav-btn px-3 py-2 rounded-lg transition flex items-center gap-2 hover:bg-slate-100">
+                    <i class="fa-solid fa-book-open text-brand-lightBlue"></i> Materi Ajar
+                </button>
+                <button onclick="navigateTo('latihan')" id="nav-latihan" class="nav-btn px-3 py-2 rounded-lg transition flex items-center gap-2 hover:bg-slate-100">
+                    <i class="fa-solid fa-pen-to-square text-brand-green"></i> Latihan Soal
+                </button>
+                <button onclick="navigateTo('refleksi')" id="nav-refleksi" class="nav-btn px-3 py-2 rounded-lg transition flex items-center gap-2 hover:bg-slate-100">
+                    <i class="fa-solid fa-brain text-purple-500"></i> Refleksi
+                </button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- CONTENT CONTAINER -->
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 flex-grow w-full">
+
+        <!-- ==================================== -->
+        <!-- TAB 0: BERANDA / HOME                -->
+        <!-- ==================================== -->
+        <div id="beranda" class="tab-content active space-y-8">
+            <!-- Hero Banner -->
+            <div class="relative bg-gradient-to-br from-brand-blue via-blue-700 to-indigo-900 rounded-3xl text-white p-6 sm:p-10 shadow-xl overflow-hidden">
+                <div class="absolute -right-10 -bottom-10 w-80 h-80 bg-white/5 rounded-full blur-2xl pointer-events-none"></div>
+                <div class="relative z-10 max-w-3xl">
+                    <div class="inline-flex items-center gap-2 px-3 py-1 bg-white/20 rounded-full text-xs font-medium tracking-wide mb-4 backdrop-blur-md">
+                        <i class="fa-solid fa-volcano text-brand-orange"></i> Modul Digital IPS SMPN 3 Pakuhaji
+                    </div>
+                    <h1 class="text-2xl sm:text-4xl lg:text-5xl font-black tracking-tight leading-tight mb-4">
+                        POTENSI BENCANA ALAM DI INDONESIA
+                    </h1>
+                    <p class="text-blue-100 text-sm sm:text-base leading-relaxed mb-6">
+                        Pelajari karakteristik geografis Indonesia, berbagai ancaman bencana alam, dampak sosial-ekonomi, serta strategi mitigasi dan kesiapsiagaan diri secara interaktif.
+                    </p>
+                    <div class="flex flex-wrap gap-3">
+                        <button onclick="navigateTo('apersepsi')" class="px-6 py-3 bg-brand-orange hover:bg-orange-600 font-bold rounded-xl shadow-lg transition transform hover:-translate-y-0.5 flex items-center gap-2">
+                            <span>Mulai Pembelajaran</span>
+                            <i class="fa-solid fa-arrow-right"></i>
+                        </button>
+                        <button onclick="navigateTo('materi')" class="px-6 py-3 bg-white/10 hover:bg-white/20 border border-white/30 font-semibold rounded-xl backdrop-blur-md transition flex items-center gap-2">
+                            <i class="fa-solid fa-book"></i> Langsung ke Materi
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Fast Stats & School Identity Banner -->
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+                <div class="bg-white p-4 rounded-2xl border border-slate-200 shadow-sm flex items-center gap-4">
+                    <div class="p-3 bg-blue-100 text-brand-blue rounded-xl"><i class="fa-solid fa-school text-xl"></i></div>
+                    <div>
+                        <p class="text-xs text-slate-500 font-medium">Instansi</p>
+                        <p class="text-xs sm:text-sm font-bold text-slate-800">SMPN 3 Pakuhaji</p>
+                    </div>
+                </div>
+                <div class="bg-white p-4 rounded-2xl border border-slate-200 shadow-sm flex items-center gap-4">
+                    <div class="p-3 bg-green-100 text-brand-green rounded-xl"><i class="fa-solid fa-layer-group text-xl"></i></div>
+                    <div>
+                        <p class="text-xs text-slate-500 font-medium">Mata Pelajaran</p>
+                        <p class="text-xs sm:text-sm font-bold text-slate-800">IPS - Kelas VII</p>
+                    </div>
+                </div>
+                <div class="bg-white p-4 rounded-2xl border border-slate-200 shadow-sm flex items-center gap-4">
+                    <div class="p-3 bg-orange-100 text-brand-orange rounded-xl"><i class="fa-solid fa-shield-halved text-xl"></i></div>
+                    <div>
+                        <p class="text-xs text-slate-500 font-medium">Fokus Topik</p>
+                        <p class="text-xs sm:text-sm font-bold text-slate-800">Mitigasi Bencana</p>
+                    </div>
+                </div>
+                <div class="bg-white p-4 rounded-2xl border border-slate-200 shadow-sm flex items-center gap-4">
+                    <div class="p-3 bg-purple-100 text-purple-600 rounded-xl"><i class="fa-solid fa-certificate text-xl"></i></div>
+                    <div>
+                        <p class="text-xs text-slate-500 font-medium">Kurikulum</p>
+                        <p class="text-xs sm:text-sm font-bold text-slate-800">Kurikulum Merdeka</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 5 Main Navigation Cards -->
+            <div class="space-y-4">
+                <h3 class="text-xl font-bold text-slate-800 flex items-center gap-2">
+                    <i class="fa-solid fa-compass text-brand-blue"></i> Menu Pembelajaran Utama
+                </h3>
+                <div class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-5 gap-4">
+                    <!-- Card 1 -->
+                    <div onclick="navigateTo('tujuan')" class="group bg-white p-5 rounded-2xl border border-slate-200 shadow-sm hover:shadow-md transition hover:-translate-y-1 cursor-pointer flex flex-col justify-between">
+                        <div>
+                            <div class="w-12 h-12 bg-red-100 text-red-600 rounded-xl flex items-center justify-center mb-4 group-hover:scale-110 transition">
+                                <i class="fa-solid fa-bullseye text-2xl"></i>
+                            </div>
+                            <h4 class="font-bold text-slate-800 text-base mb-1">1. Tujuan Pembelajaran</h4>
+                            <p class="text-xs text-slate-500 leading-relaxed">Capaian & target kompetensi yang harus dikuasai siswa.</p>
+                        </div>
+                        <span class="mt-4 text-xs font-semibold text-red-600 flex items-center gap-1 group-hover:translate-x-1 transition">Buka Card <i class="fa-solid fa-chevron-right text-[10px]"></i></span>
+                    </div>
+
+                    <!-- Card 2 -->
+                    <div onclick="navigateTo('apersepsi')" class="group bg-white p-5 rounded-2xl border border-slate-200 shadow-sm hover:shadow-md transition hover:-translate-y-1 cursor-pointer flex flex-col justify-between">
+                        <div>
+                            <div class="w-12 h-12 bg-amber-100 text-amber-600 rounded-xl flex items-center justify-center mb-4 group-hover:scale-110 transition">
+                                <i class="fa-solid fa-lightbulb text-2xl"></i>
+                            </div>
+                            <h4 class="font-bold text-slate-800 text-base mb-1">2. Apersepsi & Pre-test</h4>
+                            <p class="text-xs text-slate-500 leading-relaxed">Pertanyaan pemantik, cerita, dan kuis awal 5 soal.</p>
+                        </div>
+                        <span class="mt-4 text-xs font-semibold text-amber-600 flex items-center gap-1 group-hover:translate-x-1 transition">Buka Card <i class="fa-solid fa-chevron-right text-[10px]"></i></span>
+                    </div>
+
+                    <!-- Card 3 -->
+                    <div onclick="navigateTo('materi')" class="group bg-white p-5 rounded-2xl border border-slate-200 shadow-sm hover:shadow-md transition hover:-translate-y-1 cursor-pointer flex flex-col justify-between">
+                        <div>
+                            <div class="w-12 h-12 bg-blue-100 text-brand-blue rounded-xl flex items-center justify-center mb-4 group-hover:scale-110 transition">
+                                <i class="fa-solid fa-book-open text-2xl"></i>
+                            </div>
+                            <h4 class="font-bold text-slate-800 text-base mb-1">3. Materi Ajar Complete</h4>
+                            <p class="text-xs text-slate-500 leading-relaxed">Modul interaktif Subbab A-F lengkap dengan peta & simulasi.</p>
+                        </div>
+                        <span class="mt-4 text-xs font-semibold text-brand-blue flex items-center gap-1 group-hover:translate-x-1 transition">Buka Card <i class="fa-solid fa-chevron-right text-[10px]"></i></span>
+                    </div>
+
+                    <!-- Card 4 -->
+                    <div onclick="navigateTo('latihan')" class="group bg-white p-5 rounded-2xl border border-slate-200 shadow-sm hover:shadow-md transition hover:-translate-y-1 cursor-pointer flex flex-col justify-between">
+                        <div>
+                            <div class="w-12 h-12 bg-emerald-100 text-emerald-600 rounded-xl flex items-center justify-center mb-4 group-hover:scale-110 transition">
+                                <i class="fa-solid fa-pen-to-square text-2xl"></i>
+                            </div>
+                            <h4 class="font-bold text-slate-800 text-base mb-1">4. Latihan Soal Evaluasi</h4>
+                            <p class="text-xs text-slate-500 leading-relaxed">20 Soal variatif (PG, BS, Menjodohkan, Isian, Uraian).</p>
+                        </div>
+                        <span class="mt-4 text-xs font-semibold text-emerald-600 flex items-center gap-1 group-hover:translate-x-1 transition">Buka Card <i class="fa-solid fa-chevron-right text-[10px]"></i></span>
+                    </div>
+
+                    <!-- Card 5 -->
+                    <div onclick="navigateTo('refleksi')" class="group bg-white p-5 rounded-2xl border border-slate-200 shadow-sm hover:shadow-md transition hover:-translate-y-1 cursor-pointer flex flex-col justify-between">
+                        <div>
+                            <div class="w-12 h-12 bg-purple-100 text-purple-600 rounded-xl flex items-center justify-center mb-4 group-hover:scale-110 transition">
+                                <i class="fa-solid fa-brain text-2xl"></i>
+                            </div>
+                            <h4 class="font-bold text-slate-800 text-base mb-1">5. Refleksi Belajar</h4>
+                            <p class="text-xs text-slate-500 leading-relaxed">Self-assessment, checklist capaian, & resume belajar.</p>
+                        </div>
+                        <span class="mt-4 text-xs font-semibold text-purple-600 flex items-center gap-1 group-hover:translate-x-1 transition">Buka Card <i class="fa-solid fa-chevron-right text-[10px]"></i></span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Ilustrasi & Visual Overview Bencana Alam -->
+            <div class="bg-white rounded-3xl p-6 border border-slate-200 shadow-sm">
+                <h3 class="text-lg font-bold text-slate-800 mb-4 flex items-center gap-2">
+                    <i class="fa-solid fa-map-location-dot text-brand-orange"></i> Sebaran Potensi Bencana Alam Utama di Indonesia
+                </h3>
+                <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3 text-center">
+                    <div class="p-3 bg-red-50 hover:bg-red-100 rounded-2xl transition cursor-pointer border border-red-100">
+                        <div class="text-3xl mb-1">🌋</div>
+                        <p class="text-xs font-bold text-red-700">Gunung Api</p>
+                        <p class="text-[10px] text-slate-500">Ring of Fire</p>
+                    </div>
+                    <div class="p-3 bg-amber-50 hover:bg-amber-100 rounded-2xl transition cursor-pointer border border-amber-100">
+                        <div class="text-3xl mb-1">🌐</div>
+                        <p class="text-xs font-bold text-amber-700">Gempa Bumi</p>
+                        <p class="text-[10px] text-slate-500">Sesar & Subduksi</p>
+                    </div>
+                    <div class="p-3 bg-blue-50 hover:bg-blue-100 rounded-2xl transition cursor-pointer border border-blue-100">
+                        <div class="text-3xl mb-1">🌊</div>
+                        <p class="text-xs font-bold text-blue-700">Tsunami</p>
+                        <p class="text-[10px] text-slate-500">Pesisir Pantai</p>
+                    </div>
+                    <div class="p-3 bg-cyan-50 hover:bg-cyan-100 rounded-2xl transition cursor-pointer border border-cyan-100">
+                        <div class="text-3xl mb-1">🌧️</div>
+                        <p class="text-xs font-bold text-cyan-700">Banjir</p>
+                        <p class="text-[10px] text-slate-500">Dataran Rendah</p>
+                    </div>
+                    <div class="p-3 bg-orange-50 hover:bg-orange-100 rounded-2xl transition cursor-pointer border border-orange-100">
+                        <div class="text-3xl mb-1">⛰️</div>
+                        <p class="text-xs font-bold text-orange-700">Tanah Longsor</p>
+                        <p class="text-[10px] text-slate-500">Lereng Curam</p>
+                    </div>
+                    <div class="p-3 bg-emerald-50 hover:bg-emerald-100 rounded-2xl transition cursor-pointer border border-emerald-100">
+                        <div class="text-3xl mb-1">🔥</div>
+                        <p class="text-xs font-bold text-emerald-700">Karhutla</p>
+                        <p class="text-[10px] text-slate-500">Lahan Gambut</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ==================================== -->
+        <!-- TAB 1: TUJUAN PEMBELAJARAN           -->
+        <!-- ==================================== -->
+        <div id="tujuan" class="tab-content space-y-6">
+            <div class="bg-gradient-to-r from-red-600 to-rose-700 text-white p-6 rounded-3xl shadow-md">
+                <h2 class="text-2xl font-black mb-2 flex items-center gap-2">
+                    <i class="fa-solid fa-bullseye"></i> TUJUAN PEMBELAJARAN
+                </h2>
+                <p class="text-red-100 text-sm">Klik pada setiap kartu untuk membuka target capaian dan indikator keberhasilanmu!</p>
+            </div>
+
+            <!-- Interactive Cards Grid -->
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5" id="tujuanCardsContainer">
+                <!-- Objectives populated via JS -->
+            </div>
+
+            <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm flex flex-col sm:flex-row items-center justify-between gap-4">
+                <div class="flex items-center gap-3">
+                    <div class="p-3 bg-red-100 text-red-600 rounded-xl"><i class="fa-solid fa-flag text-2xl"></i></div>
+                    <div>
+                        <p class="text-xs text-slate-500">Sikap Utama</p>
+                        <p class="text-sm font-bold text-slate-800">Peduli, Tanggap, dan Bertanggung Jawab Lingkungan</p>
+                    </div>
+                </div>
+                <button onclick="navigateTo('apersepsi')" class="w-full sm:w-auto px-6 py-2.5 bg-brand-blue text-white rounded-xl font-semibold text-sm hover:bg-blue-800 transition">
+                    Lanjut ke Apersepsi <i class="fa-solid fa-arrow-right ml-1"></i>
+                </button>
+            </div>
+        </div>
+
+        <!-- ==================================== -->
+        <!-- TAB 2: APERSEPSI                     -->
+        <!-- ==================================== -->
+        <div id="apersepsi" class="tab-content space-y-8">
+            <div class="bg-gradient-to-r from-amber-500 to-orange-600 text-white p-6 rounded-3xl shadow-md">
+                <h2 class="text-2xl font-black mb-2 flex items-center gap-2">
+                    <i class="fa-solid fa-lightbulb"></i> APERSEPSI & PENGALAMAN AWAL
+                </h2>
+                <p class="text-amber-100 text-sm">Mari menghubungkan pengetahuan awalmu dengan kondisi lingkungan sekitar!</p>
+            </div>
+
+            <!-- Trigger Questions & Case Narrative -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div class="bg-white p-6 rounded-3xl border border-slate-200 shadow-sm space-y-4">
+                    <h3 class="text-lg font-bold text-amber-700 flex items-center gap-2">
+                        <i class="fa-solid fa-circle-question"></i> Pertanyaan Pemantik
+                    </h3>
+                    <div class="p-4 bg-amber-50 rounded-2xl border border-amber-200 text-slate-700 text-sm leading-relaxed space-y-3">
+                        <p class="font-semibold text-slate-800">1. "Mengapa negeri kita Indonesia sangat sering mengalami bencana alam seperti gempa, banjir, dan gunung meletus?"</p>
+                        <p class="font-semibold text-slate-800">2. "Bencana alam apa saja yang pernah kamu lihat langsung atau saksikan melalui media di sekitar tempat tinggalmu?"</p>
+                    </div>
+                    <div class="p-4 bg-blue-50 rounded-2xl border border-blue-200 text-xs text-slate-600">
+                        <span class="font-bold text-brand-blue">💡 Pesan Motivasi:</span> Memahami bencana alam bukanlah untuk membuat kita takut, melainkan agar kita tanggap, siap siaga, dan mampu menyelamatkan diri serta orang-orang di sekitar kita!
+                    </div>
+                </div>
+
+                <!-- Short Narrative Story -->
+                <div class="bg-white p-6 rounded-3xl border border-slate-200 shadow-sm space-y-4">
+                    <h3 class="text-lg font-bold text-slate-800 flex items-center gap-2">
+                        <i class="fa-solid fa-book-open-reader text-brand-orange"></i> Kisah Tanggap Bencana: "Kisah Dika di Desa Sukalama"
+                    </h3>
+                    <p class="text-xs text-slate-600 leading-relaxed text-justify">
+                        Suatu sore di musim hujan, hujan deras mengguyur desa tempat tinggal Dika selama 5 jam tanpa henti. Karena sungai setempat meluap akibat tersumbat sampah, air mulai masuk ke pemukiman. Dika yang sudah mempelajari kesiapsiagaan bencana segera mengingatkan keluarganya untuk mematikan aliran listrik, mengamankan dokumen penting ke tempat tinggi, dan bersiap menuju titik kumpul desa.
+                    </p>
+                    <p class="text-xs text-slate-600 leading-relaxed text-justify font-medium text-brand-orange">
+                        Tindakan cepat Dika berhasil menyelamatkan barang penting keluarganya dan menghindari bahaya sengatan listrik!
+                    </p>
+                </div>
+            </div>
+
+            <!-- Pre-Test Section (5 Questions) -->
+            <div class="bg-white p-6 rounded-3xl border border-slate-200 shadow-sm space-y-6">
+                <div class="flex justify-between items-center border-b pb-4">
+                    <div>
+                        <h3 class="text-xl font-bold text-slate-800">Kuis Awal (Pre-Test 5 Soal)</h3>
+                        <p class="text-xs text-slate-500">Uji pengetahuan awalmu sebelum memasuki materi utama.</p>
+                    </div>
+                    <span id="pretestBadge" class="px-3 py-1 bg-amber-100 text-amber-800 rounded-full text-xs font-bold">Belum Dikerjakan</span>
+                </div>
+
+                <div id="pretestContainer" class="space-y-6">
+                    <!-- Pretest questions rendered by JS -->
+                </div>
+
+                <div class="flex justify-between items-center pt-4 border-t">
+                    <button onclick="checkPretest()" class="px-6 py-2.5 bg-brand-orange hover:bg-orange-600 text-white rounded-xl font-bold text-sm shadow transition">
+                        Periksa Jawaban Pre-Test
+                    </button>
+                    <button onclick="navigateTo('materi')" class="px-6 py-2.5 bg-brand-green hover:bg-emerald-700 text-white rounded-xl font-bold text-sm shadow transition">
+                        Lanjut ke Materi Ajar <i class="fa-solid fa-arrow-right ml-1"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- ==================================== -->
+        <!-- TAB 3: MATERI AJAR                   -->
+        <!-- ==================================== -->
+        <div id="materi" class="tab-content space-y-8">
+            <div class="bg-gradient-to-r from-brand-blue to-indigo-800 text-white p-6 rounded-3xl shadow-md flex flex-wrap justify-between items-center gap-4">
+                <div>
+                    <h2 class="text-2xl font-black mb-1 flex items-center gap-2">
+                        <i class="fa-solid fa-book-open"></i> MATERI AJAR INTERAKTIF
+                    </h2>
+                    <p class="text-blue-100 text-sm">Modul Pembelajaran Potensi Bencana Alam di Indonesia - SMPN 3 Pakuhaji</p>
+                </div>
+                <!-- Subbab Navigator Tabs -->
+                <div class="flex flex-wrap gap-2 text-xs">
+                    <button onclick="showSubbab('subA')" class="subnav-btn px-3 py-1.5 bg-white/20 hover:bg-white text-white hover:text-brand-blue rounded-lg font-semibold transition" id="btn-subA">Sub A: Pengertian</button>
+                    <button onclick="showSubbab('subB')" class="subnav-btn px-3 py-1.5 bg-white/20 hover:bg-white text-white hover:text-brand-blue rounded-lg font-semibold transition" id="btn-subB">Sub B: Mengapa Rawan?</button>
+                    <button onclick="showSubbab('subC')" class="subnav-btn px-3 py-1.5 bg-white/20 hover:bg-white text-white hover:text-brand-blue rounded-lg font-semibold transition" id="btn-subC">Sub C: Jenis Bencana</button>
+                    <button onclick="showSubbab('subD')" class="subnav-btn px-3 py-1.5 bg-white/20 hover:bg-white text-white hover:text-brand-blue rounded-lg font-semibold transition" id="btn-subD">Sub D: Dampak</button>
+                    <button onclick="showSubbab('subE')" class="subnav-btn px-3 py-1.5 bg-white/20 hover:bg-white text-white hover:text-brand-blue rounded-lg font-semibold transition" id="btn-subE">Sub E: Mitigasi & Simulasi</button>
+                    <button onclick="showSubbab('subF')" class="subnav-btn px-3 py-1.5 bg-white/20 hover:bg-white text-white hover:text-brand-blue rounded-lg font-semibold transition" id="btn-subF">Sub F: Contoh Soal</button>
+                </div>
+            </div>
+
+            <!-- SUBBAB A: Pengertian Bencana Alam -->
+            <div id="subA" class="subbab-content space-y-6">
+                <div class="bg-white p-6 rounded-3xl border border-slate-200 shadow-sm space-y-4">
+                    <div class="border-b pb-3">
+                        <span class="text-xs font-bold uppercase text-brand-blue tracking-wider">Subbab A</span>
+                        <h3 class="text-2xl font-bold text-slate-800">Pengertian & Konsep Dasar Bencana Alam</h3>
+                    </div>
+                    <p class="text-slate-600 text-sm leading-relaxed">
+                        Menurut <strong>UU No. 24 Tahun 2007</strong>, bencana adalah peristiwa atau rangkaian peristiwa yang mengancam dan mengganggu kehidupan dan penghidupan masyarakat yang disebabkan, baik oleh faktor alam dan/atau faktor nonalam maupun faktor manusia sehingga mengakibatkan timbulnya korban jiwa manusia, kerusakan lingkungan, kerugian harta benda, dan dampak psikologis.
+                    </p>
+
+                    <!-- Concept Formula Box -->
+                    <div class="grid grid-cols-1 md:grid-cols-4 gap-4 my-4">
+                        <div class="p-4 bg-red-50 border border-red-200 rounded-2xl">
+                            <span class="text-xs font-bold text-red-600 uppercase">1. Bahaya (Hazard)</span>
+                            <p class="text-xs text-slate-600 mt-1">Peristiwa alam yang berpotensi merusak (contoh: gempa bumi, banjir).</p>
+                        </div>
+                        <div class="p-4 bg-orange-50 border border-orange-200 rounded-2xl">
+                            <span class="text-xs font-bold text-orange-600 uppercase">2. Kerentanan (Vulnerability)</span>
+                            <p class="text-xs text-slate-600 mt-1">Kondisi fisik, sosial, atau ekonomi yang rentan terkena dampak.</p>
+                        </div>
+                        <div class="p-4 bg-green-50 border border-green-200 rounded-2xl">
+                            <span class="text-xs font-bold text-green-600 uppercase">3. Kapasitas (Capacity)</span>
+                            <p class="text-xs text-slate-600 mt-1">Kemampuan masyarakat untuk bertahan dan bangkit dari bahaya.</p>
+                        </div>
+                        <div class="p-4 bg-blue-50 border border-blue-200 rounded-2xl">
+                            <span class="text-xs font-bold text-brand-blue uppercase">4. Risiko Bencana (Risk)</span>
+                            <p class="text-xs text-slate-600 mt-1">Potensi kerugian. Risiko = (Bahaya × Kerentanan) / Kapasitas.</p>
+                        </div>
+                    </div>
+
+                    <div class="p-4 bg-slate-100 rounded-2xl text-xs text-slate-700 font-medium">
+                        <i class="fa-solid fa-circle-info text-brand-blue mr-1"></i> Catatan Kunci: Fenomena alam seperti gempa bumi di tengah gurun tanpa penduduk **bukanlah bencana**, melainkan hanya bahaya alam (hazard). Peristiwa baru dinamakan **bencana** ketika mengenai masyarakat yang rentan dan menimbulkan kerugian.
+                    </div>
+                </div>
+            </div>
+
+            <!-- SUBBAB B: Mengapa Indonesia Rawan Bencana? -->
+            <div id="subB" class="subbab-content space-y-6 hidden">
+                <div class="bg-white p-6 rounded-3xl border border-slate-200 shadow-sm space-y-6">
+                    <div class="border-b pb-3">
+                        <span class="text-xs font-bold uppercase text-brand-orange tracking-wider">Subbab B</span>
+                        <h3 class="text-2xl font-bold text-slate-800">Faktor Geografis Penyebab Indonesia Rawan Bencana</h3>
+                    </div>
+
+                    <!-- Interactive Factors Accordion -->
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div class="p-4 bg-slate-50 rounded-2xl border border-slate-200 space-y-2">
+                            <h4 class="font-bold text-brand-blue text-sm flex items-center gap-2">
+                                <i class="fa-solid fa-earth-asia"></i> 1. Pertemuan 3 Lempeng Tektonik Utama
+                            </h4>
+                            <p class="text-xs text-slate-600 leading-relaxed">
+                                Indonesia berada di titik pertemuan Lempeng Indo-Australia, Lempeng Eurasia, dan Lempeng Pasifik. Pergerakan lempeng ini menyebabkan akumulasi energi yang memicu gempa bumi dan tsunami.
+                            </p>
+                        </div>
+                        <div class="p-4 bg-slate-50 rounded-2xl border border-slate-200 space-y-2">
+                            <h4 class="font-bold text-red-600 text-sm flex items-center gap-2">
+                                <i class="fa-solid fa-volcano"></i> 2. Cincin Api Pasifik (Ring of Fire)
+                            </h4>
+                            <p class="text-xs text-slate-600 leading-relaxed">
+                                Memiliki lebih dari 127 gunung api aktif di sepanjang busur Kepulauan Sunda, menjadikannya salah satu wilayah dengan aktivitas vulkanik tertinggi di dunia.
+                            </p>
+                        </div>
+                        <div class="p-4 bg-slate-50 rounded-2xl border border-slate-200 space-y-2">
+                            <h4 class="font-bold text-amber-600 text-sm flex items-center gap-2">
+                                <i class="fa-solid fa-cloud-showers-heavy"></i> 3. Iklim Tropis & Cuaca Ekstrem
+                            </h4>
+                            <p class="text-xs text-slate-600 leading-relaxed">
+                                Perubahan angin muson dan pengaruh fenomena El Niño / La Niña memicu hujan lebat mendadak (banjir/longsor) serta musim kemarau berkepanjangan (kekeringan).
+                            </p>
+                        </div>
+                        <div class="p-4 bg-slate-50 rounded-2xl border border-slate-200 space-y-2">
+                            <h4 class="font-bold text-green-600 text-sm flex items-center gap-2">
+                                <i class="fa-solid fa-tree"></i> 4. Ulah Manusia & Kerusakan Lingkungan
+                            </h4>
+                            <p class="text-xs text-slate-600 leading-relaxed">
+                                Penebangan hutan liar (deforestasi), alih fungsi lahan resapan, dan pembuangan sampah ke sungai memperparah risiko banjir dan tanah longsor.
+                            </p>
+                        </div>
+                    </div>
+
+                    <!-- Map Illustration Box -->
+                    <div class="bg-blue-900 text-white p-6 rounded-2xl relative overflow-hidden">
+                        <h4 class="font-bold text-base mb-2"><i class="fa-solid fa-map"></i> Peta Ringkasan Potensi Lempeng & Gunung Api Indonesia</h4>
+                        <p class="text-xs text-blue-200 mb-4">Jalur Subduksi Lempeng membentang dari Barat Sumatera, Selatan Jawa, Nusa Tenggara, Maluku, hingga Papua.</p>
+                        <div class="bg-blue-950 p-4 rounded-xl border border-blue-700 font-mono text-xs text-center text-amber-300">
+                            [ Lempeng Eurasia ]<br>
+                            ↓ Subduksi ↓<br>
+                            ============================== (Jalur Gempa & Volcano) ==============================<br>
+                            ↑ Subduksi ↑<br>
+                            [ Lempeng Indo-Australia ]
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- SUBBAB C: Jenis-Jenis Bencana Alam di Indonesia -->
+            <div id="subC" class="subbab-content space-y-6 hidden">
+                <div class="bg-white p-6 rounded-3xl border border-slate-200 shadow-sm space-y-6">
+                    <div class="border-b pb-3">
+                        <span class="text-xs font-bold uppercase text-brand-green tracking-wider">Subbab C</span>
+                        <h3 class="text-2xl font-bold text-slate-800">8 Jenis Bencana Alam Utama di Indonesia</h3>
+                        <p class="text-xs text-slate-500">Klik setiap tab bencana di bawah ini untuk melihat detail lengkap!</p>
+                    </div>
+
+                    <!-- Interactive Disasters Tab Buttons -->
+                    <div class="flex flex-wrap gap-2 border-b pb-3" id="disasterTabHeader">
+                        <!-- Rendered by JS -->
+                    </div>
+
+                    <!-- Disaster Detail Card Container -->
+                    <div id="disasterDetailContainer" class="p-6 bg-slate-50 rounded-3xl border border-slate-200">
+                        <!-- Content updated by JS -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- SUBBAB D: Dampak Bencana Alam -->
+            <div id="subD" class="subbab-content space-y-6 hidden">
+                <div class="bg-white p-6 rounded-3xl border border-slate-200 shadow-sm space-y-6">
+                    <div class="border-b pb-3">
+                        <span class="text-xs font-bold uppercase text-purple-600 tracking-wider">Subbab D</span>
+                        <h3 class="text-2xl font-bold text-slate-800">Dampak Bencana Alam dari Berbagai Aspek</h3>
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div class="p-5 bg-red-50 rounded-2xl border border-red-200">
+                            <h4 class="font-bold text-red-700 text-base mb-2"><i class="fa-solid fa-users"></i> 1. Aspek Sosial</h4>
+                            <ul class="text-xs text-slate-700 space-y-1.5 list-disc list-inside">
+                                <li>Korban jiwa, luka-luka, dan orang hilang.</li>
+                                <li>Meningkatnya jumlah pengungsi di tenda darurat.</li>
+                                <li>Lumpuhnya kegiatan pendidikan dan sekolah.</li>
+                            </ul>
+                        </div>
+                        <div class="p-5 bg-amber-50 rounded-2xl border border-amber-200">
+                            <h4 class="font-bold text-amber-700 text-base mb-2"><i class="fa-solid fa-coins"></i> 2. Aspek Ekonomi</h4>
+                            <ul class="text-xs text-slate-700 space-y-1.5 list-disc list-inside">
+                                <li>Kerusakan rumah, toko, dan fasilitas umum.</li>
+                                <li>Gagal panen pada lahan pertanian dan perkebunan.</li>
+                                <li>Kerusakan infrastruktur jalan, jembatan, dan listrik.</li>
+                            </ul>
+                        </div>
+                        <div class="p-5 bg-green-50 rounded-2xl border border-green-200">
+                            <h4 class="font-bold text-green-700 text-base mb-2"><i class="fa-solid fa-leaf"></i> 3. Aspek Lingkungan</h4>
+                            <ul class="text-xs text-slate-700 space-y-1.5 list-disc list-inside">
+                                <li>Perubahan bentang alam dan erosi tanah.</li>
+                                <li>Pencemaran sumber air bersih.</li>
+                                <li>Kerusakan ekosistem hutan, flora, dan fauna.</li>
+                            </ul>
+                        </div>
+                        <div class="p-5 bg-purple-50 rounded-2xl border border-purple-200">
+                            <h4 class="font-bold text-purple-700 text-base mb-2"><i class="fa-solid fa-heart-crack"></i> 4. Aspek Psikologis</h4>
+                            <ul class="text-xs text-slate-700 space-y-1.5 list-disc list-inside">
+                                <li>Trauma dan kecemasan berlebih (PTSD) pada penyintas.</li>
+                                <li>Rasa takut akan bencana susulan.</li>
+                                <li>Kehilangan anggota keluarga dan tempat tinggal.</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <!-- Matching Interactive Activity -->
+                    <div class="p-6 bg-slate-100 rounded-3xl space-y-4">
+                        <h4 class="font-bold text-slate-800 text-base"><i class="fa-solid fa-puzzle-piece text-brand-orange"></i> Aktivitas Interaktif: Mencocokkan Dampak</h4>
+                        <p class="text-xs text-slate-600">Jodohkan kejadian bencana dengan dampak utamanya!</p>
+                        <div id="matchingActivityContainer" class="space-y-3">
+                            <!-- Rendered by JS -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- SUBBAB E: Mitigasi & Kesiapsiagaan Bencana + Simulasi -->
+            <div id="subE" class="subbab-content space-y-6 hidden">
+                <div class="bg-white p-6 rounded-3xl border border-slate-200 shadow-sm space-y-6">
+                    <div class="border-b pb-3">
+                        <span class="text-xs font-bold uppercase text-brand-orange tracking-wider">Subbab E</span>
+                        <h3 class="text-2xl font-bold text-slate-800">Mitigasi & Kesiapsiagaan Menghadapi Bencana</h3>
+                    </div>
+
+                    <!-- Tas Siaga Bencana & Langkah Kunci -->
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div class="p-5 bg-amber-50 rounded-2xl border border-amber-200 space-y-3">
+                            <h4 class="font-bold text-amber-800 text-base flex items-center gap-2">
+                                <i class="fa-solid fa-bag-shopping text-xl"></i> Isi Tas Siaga Bencana (TSB)
+                            </h4>
+                            <p class="text-xs text-slate-600">Tas khusus yang disiapkan untuk bertahan hidup minimal 3 hari saat darurat:</p>
+                            <ul class="text-xs text-slate-700 space-y-1 list-disc list-inside font-medium">
+                                <li>Surat-surat penting (KK, Ijazah, Surat Tanah dalam plastik)</li>
+                                <li>Air minum & makanan siap saji / tahan lama</li>
+                                <li>Kotak P3K & obat-obatan pribadi</li>
+                                <li>Senter, peluit (tanda minta tolong), baterai cadangan</li>
+                                <li>Pakaian ganti & jas hujan</li>
+                                <li>Uang tunai secukupnya & Ponsel + Powerbank</li>
+                            </ul>
+                        </div>
+
+                        <div class="p-5 bg-blue-50 rounded-2xl border border-blue-200 space-y-3">
+                            <h4 class="font-bold text-brand-blue text-base flex items-center gap-2">
+                                <i class="fa-solid fa-shield-cat text-xl"></i> Prinsip Mitigasi di Sekolah & Rumah
+                            </h4>
+                            <ul class="text-xs text-slate-700 space-y-2 list-disc list-inside">
+                                <li><strong>Kenali Risiko:</strong> Pahami jalur evakuasi dan titik kumpul aman.</li>
+                                <li><strong>3B Saat Gempa:</strong> Berlutut, Berlindung (di bawah meja), Bertahan (pegang kaki meja).</li>
+                                <li><strong>Simulasi Rutin:</strong> Ikuti latihan evakuasi di sekolah secara berkala.</li>
+                                <li><strong>Sumber Resmi:</strong> Selalu pantau informasi dari BMKG, BNPB, dan BPBD.</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <!-- Interactive Scenario Simulation Game -->
+                    <div class="p-6 bg-slate-900 text-white rounded-3xl space-y-4">
+                        <div class="flex items-center gap-2 text-brand-accent font-bold text-lg">
+                            <i class="fa-solid fa-gamepad"></i> SIMULASI INTERAKTIF: Pilihan Respons Darurat
+                        </div>
+                        <p class="text-xs text-slate-300">Uji ketangguhanmu! Pilih respons terbaik saat menghadapi situasi bencana darurat di bawah ini:</p>
+
+                        <div id="simulationBox" class="bg-slate-800 p-5 rounded-2xl border border-slate-700 space-y-4">
+                            <!-- Simulation question rendered by JS -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- SUBBAB F: Contoh Soal dalam Materi Ajar -->
+            <div id="subF" class="subbab-content space-y-6 hidden">
+                <div class="bg-white p-6 rounded-3xl border border-slate-200 shadow-sm space-y-6">
+                    <div class="border-b pb-3">
+                        <span class="text-xs font-bold uppercase text-brand-blue tracking-wider">Subbab F</span>
+                        <h3 class="text-2xl font-bold text-slate-800">Contoh Soal & Pembahasan per Subbab</h3>
+                        <p class="text-xs text-slate-500">Gunakan soal latihan mandiri ini untuk menguji pemahamanmu di setiap bagian materi.</p>
+                    </div>
+
+                    <div id="subbabSampleQuestions" class="space-y-6">
+                        <!-- Sample questions rendered by JS -->
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ==================================== -->
+        <!-- TAB 4: LATIHAN SOAL EVALUASI         -->
+        <!-- ==================================== -->
+        <div id="latihan" class="tab-content space-y-8">
+            <div class="bg-gradient-to-r from-emerald-600 to-teal-800 text-white p-6 rounded-3xl shadow-md flex justify-between items-center flex-wrap gap-4">
+                <div>
+                    <h2 class="text-2xl font-black mb-1 flex items-center gap-2">
+                        <i class="fa-solid fa-pen-to-square"></i> LATIHAN SOAL EVALUASI AKHIR
+                    </h2>
+                    <p class="text-emerald-100 text-sm">20 Soal Komprehensif (PG, Benar/Salah, Menjodohkan, Isian, Uraian)</p>
+                </div>
+                <div class="bg-white/20 px-4 py-2 rounded-xl backdrop-blur-md text-xs font-bold flex items-center gap-2">
+                    <i class="fa-solid fa-clock"></i> <span id="quizTimer">Waktu: Unlimited</span>
+                </div>
+            </div>
+
+            <!-- Quiz Main Card -->
+            <div class="bg-white p-6 rounded-3xl border border-slate-200 shadow-sm space-y-6">
+                <!-- Quiz Progress Bar -->
+                <div class="flex justify-between items-center text-xs font-bold text-slate-600 mb-2">
+                    <span id="quizProgressText">Soal 1 dari 20</span>
+                    <span id="quizAnsweredCount">Terjawab: 0/20</span>
+                </div>
+                <div class="w-full bg-slate-200 h-2 rounded-full overflow-hidden">
+                    <div id="quizProgressBar" class="bg-brand-green h-2 transition-all duration-300 w-[5%]"></div>
+                </div>
+
+                <!-- Single Active Question Container -->
+                <div id="quizQuestionContainer" class="min-h-[220px] p-4 bg-slate-50 rounded-2xl border border-slate-200">
+                    <!-- Dynamic Question Rendered via JS -->
+                </div>
+
+                <!-- Quiz Navigation Buttons -->
+                <div class="flex flex-wrap justify-between items-center gap-3 pt-4 border-t">
+                    <button onclick="prevQuizQuestion()" id="btnQuizPrev" class="px-5 py-2.5 bg-slate-200 hover:bg-slate-300 text-slate-700 rounded-xl font-bold text-sm transition">
+                        <i class="fa-solid fa-chevron-left mr-1"></i> Sebelumnya
+                    </button>
+                    <div class="flex gap-2">
+                        <button onclick="nextQuizQuestion()" id="btnQuizNext" class="px-5 py-2.5 bg-brand-blue hover:bg-blue-800 text-white rounded-xl font-bold text-sm transition">
+                            Berikutnya <i class="fa-solid fa-chevron-right ml-1"></i>
+                        </button>
+                        <button onclick="submitQuiz()" id="btnQuizSubmit" class="px-6 py-2.5 bg-brand-green hover:bg-emerald-700 text-white rounded-xl font-bold text-sm transition">
+                            <i class="fa-solid fa-paper-plane mr-1"></i> Selesaikan Latihan
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Quiz Result Output Box (Hidden by default) -->
+            <div id="quizResultCard" class="hidden bg-white p-8 rounded-3xl border border-slate-200 shadow-lg space-y-6 text-center">
+                <div class="w-20 h-20 bg-emerald-100 text-emerald-600 rounded-full flex items-center justify-center mx-auto text-4xl">
+                    <i class="fa-solid fa-award"></i>
+                </div>
+                <div>
+                    <h3 class="text-2xl font-black text-slate-800">Hasil Latihan Evaluasi</h3>
+                    <p class="text-xs text-slate-500">Nilai Otomatis (Objektif) - SMPN 3 Pakuhaji</p>
+                </div>
+
+                <div class="grid grid-cols-2 sm:grid-cols-4 gap-4 max-w-xl mx-auto">
+                    <div class="p-4 bg-slate-50 rounded-2xl border">
+                        <p class="text-xs text-slate-500">Skor Total</p>
+                        <p id="resScore" class="text-3xl font-black text-brand-blue">0</p>
+                    </div>
+                    <div class="p-4 bg-slate-50 rounded-2xl border">
+                        <p class="text-xs text-slate-500">Benar</p>
+                        <p id="resCorrect" class="text-3xl font-black text-green-600">0</p>
+                    </div>
+                    <div class="p-4 bg-slate-50 rounded-2xl border">
+                        <p class="text-xs text-slate-500">Salah</p>
+                        <p id="resWrong" class="text-3xl font-black text-red-600">0</p>
+                    </div>
+                    <div class="p-4 bg-slate-50 rounded-2xl border">
+                        <p class="text-xs text-slate-500">Kategori</p>
+                        <p id="resCategory" class="text-sm font-bold text-brand-orange mt-2">-</p>
+                    </div>
+                </div>
+
+                <div class="p-4 bg-blue-50 text-slate-700 rounded-2xl text-xs text-left leading-relaxed">
+                    <strong>Catatan Penilaian Uraian:</strong> Soal nomor 19 & 20 (Uraian) diperiksa dengan rubrik penilaian acuan guru. Silakan buka pembahasan di bawah untuk mencocokkan jawabanmu!
+                </div>
+
+                <div class="flex justify-center gap-3">
+                    <button onclick="restartQuiz()" class="px-6 py-2.5 bg-slate-200 hover:bg-slate-300 font-bold rounded-xl text-sm transition">
+                        <i class="fa-solid fa-rotate-right mr-1"></i> Ulangi Latihan
+                    </button>
+                    <button onclick="toggleQuizDiscussion()" class="px-6 py-2.5 bg-brand-blue hover:bg-blue-800 text-white font-bold rounded-xl text-sm transition">
+                        <i class="fa-solid fa-list-check mr-1"></i> Lihat Pembahasan
+                    </button>
+                </div>
+
+                <div id="quizDiscussionBox" class="hidden text-left space-y-4 pt-6 border-t">
+                    <h4 class="font-bold text-lg text-slate-800">Pembahasan & Kunci Jawaban Lengkap</h4>
+                    <div id="quizDiscussionContainer" class="space-y-4"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ==================================== -->
+        <!-- TAB 5: REFLEKSI BELAJAR              -->
+        <!-- ==================================== -->
+        <div id="refleksi" class="tab-content space-y-8">
+            <div class="bg-gradient-to-r from-purple-600 to-indigo-800 text-white p-6 rounded-3xl shadow-md">
+                <h2 class="text-2xl font-black mb-1 flex items-center gap-2">
+                    <i class="fa-solid fa-brain"></i> REFLEKSI & EVALUASI DIRI
+                </h2>
+                <p class="text-purple-100 text-sm">Evaluasi sejauh mana pemahamanmu terhadap materi Potensi Bencana Alam di Indonesia.</p>
+            </div>
+
+            <div class="bg-white p-6 sm:p-8 rounded-3xl border border-slate-200 shadow-sm space-y-6">
+                <!-- Understanding Level Radio -->
+                <div class="space-y-3">
+                    <label class="font-bold text-slate-800 text-sm block">1. Tingkat Pemahaman Keseluruhan:</label>
+                    <div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
+                        <label class="p-3 border rounded-2xl flex items-center gap-2 cursor-pointer hover:bg-purple-50 transition text-xs font-medium">
+                            <input type="radio" name="refLevel" value="Sangat Paham" class="text-purple-600"> Sangat Paham
+                        </label>
+                        <label class="p-3 border rounded-2xl flex items-center gap-2 cursor-pointer hover:bg-purple-50 transition text-xs font-medium">
+                            <input type="radio" name="refLevel" value="Paham" class="text-purple-600" checked> Paham
+                        </label>
+                        <label class="p-3 border rounded-2xl flex items-center gap-2 cursor-pointer hover:bg-purple-50 transition text-xs font-medium">
+                            <input type="radio" name="refLevel" value="Cukup Paham" class="text-purple-600"> Cukup Paham
+                        </label>
+                        <label class="p-3 border rounded-2xl flex items-center gap-2 cursor-pointer hover:bg-purple-50 transition text-xs font-medium">
+                            <input type="radio" name="refLevel" value="Perlu Bimbingan" class="text-purple-600"> Perlu Bimbingan
+                        </label>
+                    </div>
+                </div>
+
+                <!-- Learning Objectives Checklist -->
+                <div class="space-y-3">
+                    <label class="font-bold text-slate-800 text-sm block">2. Checklist Pencapaian Tujuan Pembelajaran:</label>
+                    <div class="space-y-2 text-xs text-slate-700">
+                        <label class="flex items-center gap-2 p-2 bg-slate-50 rounded-xl cursor-pointer">
+                            <input type="checkbox" id="chk1" checked class="rounded text-purple-600"> Saya mampu menjelaskan pengertian bencana alam & perbedaannya dengan bahaya.
+                        </label>
+                        <label class="flex items-center gap-2 p-2 bg-slate-50 rounded-xl cursor-pointer">
+                            <input type="checkbox" id="chk2" checked class="rounded text-purple-600"> Saya dapat mengidentifikasi letak geografis & cincin api penyebab rawan bencana.
+                        </label>
+                        <label class="flex items-center gap-2 p-2 bg-slate-50 rounded-xl cursor-pointer">
+                            <input type="checkbox" id="chk3" class="rounded text-purple-600"> Saya memahami 8 jenis bencana alam utama beserta penyebab dan dampaknya.
+                        </label>
+                        <label class="flex items-center gap-2 p-2 bg-slate-50 rounded-xl cursor-pointer">
+                            <input type="checkbox" id="chk4" class="rounded text-purple-600"> Saya mengetahui isi Tas Siaga Bencana & langkah mitigasi darurat.
+                        </label>
+                    </div>
+                </div>
+
+                <!-- Reflection Questions Textarea -->
+                <div class="space-y-4">
+                    <div>
+                        <label class="font-bold text-slate-800 text-xs block mb-1">3. Apa pengetahuan baru terbesar yang kamu peroleh?</label>
+                        <textarea id="refQ1" rows="2" class="w-full p-3 bg-slate-50 border border-slate-200 rounded-xl text-xs focus:ring-2 focus:ring-purple-500 focus:outline-none" placeholder="Tuliskan pengetahuan barumu di sini..."></textarea>
+                    </div>
+                    <div>
+                        <label class="font-bold text-slate-800 text-xs block mb-1">4. Tindakan nyata apa yang akan kamu lakukan di rumah/sekolah untuk siap siaga bencana?</label>
+                        <textarea id="refQ2" rows="2" class="w-full p-3 bg-slate-50 border border-slate-200 rounded-xl text-xs focus:ring-2 focus:ring-purple-500 focus:outline-none" placeholder="Contoh: Menyiapkan tas siaga, tidak membuang sampah sembarangan..."></textarea>
+                    </div>
+                </div>
+
+                <!-- Save & GAS Sync Buttons -->
+                <div class="flex flex-wrap items-center justify-between gap-3 pt-4 border-t">
+                    <button onclick="saveReflection()" class="px-6 py-2.5 bg-purple-600 hover:bg-purple-700 text-white rounded-xl font-bold text-sm shadow transition">
+                        <i class="fa-solid fa-floppy-disk mr-1"></i> Simpan Refleksi ke Browser
+                    </button>
+                    <button onclick="syncToGoogleSheets()" class="px-5 py-2.5 bg-green-600 hover:bg-green-700 text-white rounded-xl font-bold text-xs transition flex items-center gap-1.5">
+                        <i class="fa-solid fa-file-excel"></i> Kirim Refleksi ke Guru (Google Sheets)
+                    </button>
+                </div>
+
+                <!-- Summary Output Box -->
+                <div id="reflectionSummaryBox" class="hidden p-4 bg-purple-50 border border-purple-200 rounded-2xl text-xs space-y-2">
+                    <h4 class="font-bold text-purple-900 flex items-center gap-1"><i class="fa-solid fa-circle-check text-green-600"></i> Refleksi Tersimpan!</h4>
+                    <p id="refSummaryText" class="text-purple-800"></p>
+                </div>
+            </div>
+        </div>
+
+    </main>
+
+    <!-- FOOTER & OFFICIAL REFERENCES -->
+    <footer class="bg-slate-900 text-slate-400 border-t border-slate-800 mt-12 py-8">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-6">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6 text-xs">
+                <div>
+                    <h4 class="text-white font-bold text-sm mb-2">SMP NEGERI 3 PAKUHAJI</h4>
+                    <p class="leading-relaxed">Media Pembelajaran Digital Interaktif IPS Kelas VII - Materi Potensi Bencana Alam di Indonesia (Kurikulum Merdeka).</p>
+                </div>
+                <div>
+                    <h4 class="text-white font-bold text-sm mb-2">Sumber & Rujukan Resmi</h4>
+                    <ul class="space-y-1">
+                        <li>• Badan Meteorologi, Klimatologi, dan Geofisika (<a href="https://www.bmkg.go.id" target="_blank" class="text-brand-lightBlue hover:underline">BMKG</a>)</li>
+                        <li>• Badan Nasional Penanggulangan Bencana (<a href="https://www.bnpb.go.id" target="_blank" class="text-brand-lightBlue hover:underline">BNPB</a>)</li>
+                        <li>• Pusat Vulkanologi dan Mitigasi Bencana Geologi (<a href="https://vsi.esdm.go.id" target="_blank" class="text-brand-lightBlue hover:underline">PVMBG</a>)</li>
+                    </ul>
+                </div>
+                <div>
+                    <h4 class="text-white font-bold text-sm mb-2">Akses Cepat & Bantuan</h4>
+                    <p class="leading-relaxed">Aplikasi ini bersifat responsif dan dapat diakses melalui HP, Tablet, Laptop, maupun Komputer.</p>
+                </div>
+            </div>
+            <div class="text-center text-[11px] text-slate-600 border-t border-slate-800 pt-4">
+                © 2026 SMP Negeri 3 Pakuhaji. Hak Cipta Dilindungi. Media Pembelajaran IPS Interaktif.
+            </div>
+        </div>
+    </footer>
+
+    <!-- MODAL: DASHBOARD PROGRES BELAJAR -->
+    <div id="modalDashboard" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+        <div class="bg-white rounded-3xl max-w-lg w-full p-6 space-y-5 shadow-2xl relative">
+            <button onclick="closeModal('modalDashboard')" class="absolute top-4 right-4 text-slate-400 hover:text-slate-600 text-xl font-bold">&times;</button>
+            <div class="flex items-center gap-3">
+                <div class="p-3 bg-brand-orange/10 text-brand-orange rounded-xl"><i class="fa-solid fa-chart-line text-2xl"></i></div>
+                <div>
+                    <h3 class="text-lg font-bold text-slate-800">Dashboard Progres Siswa</h3>
+                    <p class="text-xs text-slate-500">Rekapitulasi aktivitas pembelajaranmu</p>
+                </div>
+            </div>
+            <div class="space-y-3 text-xs">
+                <div class="p-3 bg-slate-50 rounded-xl flex justify-between items-center">
+                    <span>Menu Pembelajaran Dikunjungi:</span>
+                    <span id="dashVisited" class="font-bold text-brand-blue">1/5 Menu</span>
+                </div>
+                <div class="p-3 bg-slate-50 rounded-xl flex justify-between items-center">
+                    <span>Status Pre-Test (Apersepsi):</span>
+                    <span id="dashPretest" class="font-bold text-amber-600">Belum Selesai</span>
+                </div>
+                <div class="p-3 bg-slate-50 rounded-xl flex justify-between items-center">
+                    <span>Nilai Latihan Evaluasi Akhir:</span>
+                    <span id="dashQuiz" class="font-bold text-emerald-600">Belum Dikerjakan</span>
+                </div>
+                <div class="p-3 bg-slate-50 rounded-xl flex justify-between items-center">
+                    <span>Status Refleksi Belajar:</span>
+                    <span id="dashRef" class="font-bold text-purple-600">Belum Disimpan</span>
+                </div>
+            </div>
+            <button onclick="closeModal('modalDashboard')" class="w-full py-2.5 bg-slate-800 text-white font-bold text-xs rounded-xl hover:bg-slate-900">Tutup Dashboard</button>
+        </div>
+    </div>
+
+    <!-- MODAL: GLOSARIUM ISTILAH IPS -->
+    <div id="modalGlosarium" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+        <div class="bg-white rounded-3xl max-w-2xl w-full p-6 space-y-4 shadow-2xl relative max-h-[85vh] flex flex-col">
+            <div class="flex justify-between items-center border-b pb-3">
+                <h3 class="text-lg font-bold text-slate-800 flex items-center gap-2"><i class="fa-solid fa-book-bookmark text-green-600"></i> Glosarium Istilah IPS Bencana</h3>
+                <button onclick="closeModal('modalGlosarium')" class="text-slate-400 hover:text-slate-600 text-xl font-bold">&times;</button>
+            </div>
+            <div class="overflow-y-auto space-y-3 pr-2 text-xs">
+                <div class="p-3 bg-slate-50 rounded-xl"><strong>Mitigasi:</strong> Upaya untuk mengurangi risiko dan dampak bencana melalui pembangunan fisik maupun penyadaran masyarakat.</div>
+                <div class="p-3 bg-slate-50 rounded-xl"><strong>Evakuasi:</strong> Pemindahan penduduk dari daerah yang berbahaya ke tempat yang aman.</div>
+                <div class="p-3 bg-slate-50 rounded-xl"><strong>Tektonik:</strong> Pergerakan kerak atau lempeng bumi yang memicu gempa bumi dan pembentukan pegunungan.</div>
+                <div class="p-3 bg-slate-50 rounded-xl"><strong>Vulkanik:</strong> Aktivitas magma di dalam perut bumi yang keluar ke permukaan melalui gunung api.</div>
+                <div class="p-3 bg-slate-50 rounded-xl"><strong>Kerentanan (Vulnerability):</strong> Kondisi masyarakat yang menyebabkan ketidakmampuan menghadapi ancaman bahaya.</div>
+                <div class="p-3 bg-slate-50 rounded-xl"><strong>Kesiapsiagaan:</strong> Serangkaian kegiatan yang dilakukan untuk mengantisipasi bencana melalui pengorganisasian serta langkah cepat dan tepat.</div>
+                <div class="p-3 bg-slate-50 rounded-xl"><strong>Tsunami:</strong> Gelombang laut dahsyat yang dipicu oleh gempa bumi dangkal di dasar laut atau letusan gunung api bawah laut.</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- MAIN JAVASCRIPT LOGIC -->
+    <script>
+        /* ======================================================== */
+        /* APPLICATION STATE & GLOBALS                              */
+        /* ======================================================== */
+        const state = {
+            visitedPages: new Set(['beranda']),
+            pretestDone: false,
+            pretestScore: 0,
+            quizDone: false,
+            quizScore: 0,
+            quizAnswers: {},
+            currentQuizIndex: 0,
+            reflectionSaved: false
+        };
+
+        /* ======================================================== */
+        /* DATA: TUJUAN PEMBELAJARAN CARDS                          */
+        /* ======================================================== */
+        const tujuanData = [
+            { id: 1, title: "1. Pengertian Bencana Alam", desc: "Menjelaskan pengertian bencana alam, bahaya, kerentanan, dan potensi bencana di Indonesia." },
+            { id: 2, title: "2. Faktor Geografis Rawan Bencana", desc: "Mengidentifikasi faktor lempeng tektonik, cincin api, iklim, dan bentang alam Indonesia." },
+            { id: 3, title: "3. Jenis-Jenis Bencana Alam", desc: "Mengidentifikasi 8 jenis bencana alam utama yang berpotensi terjadi di wilayah Indonesia." },
+            { id: 4, title: "4. Karakteristik & Dampak Bencana", desc: "Menjelaskan penyebab, ciri-ciri, dampak sosial, ekonomi, dan contoh peristiwa nyatanya." },
+            { id: 5, title: "5. Analisis Kondisi & Risiko", desc: "Menganalisis hubungan antara kondisi alam Indonesia dengan tingkat risiko bencana." },
+            { id: 6, title: "6. Mitigasi & Kesiapsiagaan Diri", desc: "Menjelaskan langkah keselamatan sebelum, saat, dan sesudah bencana serta tas siaga." }
+        ];
+
+        /* ======================================================== */
+        /* DATA: PRE-TEST (5 QUESTIONS)                             */
+        /* ======================================================== */
+        const pretestQuestions = [
+            { id: 1, q: "Indonesia sering mengalami gempa bumi karena berada di pertemuan...", options: ["A. Tiga lempeng tektonik utama", "B. Dua samudra besar saja", "C. Garis khatulistiwa saja", "D. Kutub utara dan selatan"], ans: 0 },
+            { id: 2, q: "Peristiwa alam baru disebut sebagai BENCANA apabila...", options: ["A. Terjadi di gurun pasir tanpa manusia", "B. Menimbulkan korban, kerugian, & merusak pemukiman", "C. Terjadi di malam hari", "D. Terjadi di lautan lepas"], ans: 1 },
+            { id: 3, q: "Gelombang laut tinggi yang dipicu oleh gempa dangkal di dasar laut disebut...", options: ["A. Angin puting beliung", "B. Tsunami", "C. Banjir rob", "D. Abrasi pantai"], ans: 1 },
+            { id: 4, q: "Upaya untuk mengurangi risiko dan dampak bencana sebelum terjadi disebut...", options: ["A. Evakuasi", "B. Mitigasi", "C. Rehabilitasi", "D. Rekonstruksi"], ans: 1 },
+            { id: 5, q: "Tindakan utama yang harus dilakukan di dalam kelas saat terjadi gempa bumi adalah...", options: ["A. Berlari berlomba menuju tangga", "B. Bersembunyi di balik pintu", "C. Berlindung di bawah meja yang kokoh dan lindungi kepala", "D. Berteriak sekencang-kencangnya"], ans: 2 }
+        ];
+
+        /* ======================================================== */
+        /* DATA: 8 DISASTERS DETAILS (SUBBAB C)                     */
+        /* ======================================================== */
+        const disasterData = [
+            {
+                id: 'gempa',
+                name: 'Gempa Bumi',
+                icon: '🌐',
+                desc: 'Getaran atau guncangan yang terjadi di permukaan bumi akibat pelepasan energi dari dalam secara tiba-tiba.',
+                cause: 'Pergeseran lempeng tektonik (gempa tektonik) atau aktivitas gunung api (gempa vulkanik).',
+                signs: 'Guncangan tanah, tanah retak, lampu/pohon bergoyang, suara gemuruh dari tanah.',
+                areas: 'Sumatera, Jawa, Bali, NTB, NTT, Sulawesi, Maluku, dan Papua.',
+                cases: 'Gempa Jogja 2006 (M6.3), Gempa Cianjur 2022 (M5.6).',
+                impact: 'Rumah roboh, jembatan putus, fasilitas umum rusak, korban jiwa.',
+                mitigation: 'Konstruksi bangunan tahan gempa, penataan tata ruang.',
+                action: 'Saat kejadian: Berlindung di bawah meja kokoh, lindungi kepala. Setelah: Keluar menuju lapangan terbuka.'
+            },
+            {
+                id: 'tsunami',
+                name: 'Tsunami',
+                icon: '🌊',
+                desc: 'Rangkaian gelombang laut berbahaya dengan kecepatan tinggi yang menjangkau daratan.',
+                cause: 'Gempa bumi dasar laut berskala >7.0 SR, kedalaman dangkal (<60 km), atau longsor bawah laut.',
+                signs: 'Guncangan gempa kuat di pesisir, air laut surut secara mendadak dan jauh, bau amis laut menyengat.',
+                areas: 'Pesisir Barat Sumatera, Pesisir Selatan Jawa, Maluku, Sulawesi.',
+                cases: 'Tsunami Aceh 2004, Tsunami Palu 2018, Tsunami Selat Sunda 2018.',
+                impact: 'Kerusakan total wilayah pesisir, tenggelamnya pemukiman, erosi berat.',
+                mitigation: 'Pembangunan sirine tsunami, penanaman hutan mangrove, jalur evakuasi pantai.',
+                action: 'Jika air laut surut mendadak setelah gempa: SEGERA LARI KE TEMPAT TINGGI! Jangan tunggu sirine.'
+            },
+            {
+                id: 'volcano',
+                name: 'Letusan Gunung Api',
+                icon: '🌋',
+                desc: 'Bagian dari aktivitas vulkanik berupa keluarnya magma, gumpalan abu, gas beracun, dan awan panas.',
+                cause: 'Tekanan gas dan pergerakan magma di dalam perut gunung api yang membesar.',
+                signs: 'Suhu sekitar gunung naik, sumber air mengering, timbul gempa vulkanik halus, hewan turun gunung.',
+                areas: 'Jalur Cincin Api: Sumatera, Jawa, Bali, NTB, NTT, Maluku Utara, Sulawesi Utara.',
+                cases: 'Erupsi Gunung Merapi 2010, Erupsi Gunung Semeru 2021.',
+                impact: 'Awan panas membakar pemukiman, hujan abu merusak tanaman & pernapasan, lahar dingin.',
+                mitigation: 'Pemetaan Kawasan Rawan Bencana (KRB), sistem peringatan dini PVMBG.',
+                action: 'Gunakan masker dan kacamata pelindung, jauhi aliran sungai berhulu di gunung, evakuasi sesuai arahan.'
+            },
+            {
+                id: 'banjir',
+                name: 'Banjir',
+                icon: '🌧️',
+                desc: 'Meluapnya air laut atau sungai hingga menggenangi daratan yang biasanya kering.',
+                cause: 'Curah hujan tinggi, pendangkalan sungai, sampah tersumbat, deforestasi di hulu sungai.',
+                signs: 'Hujan deras terus-menerus, air sungai meluap dan keruh.',
+                areas: 'Dataran rendah, bantaran sungai, dan daerah perkotaan padat (Jakarta, Tangerang, Semarang).',
+                cases: 'Banjir Jabodetabek 2020, Banjir Kalimantan Selatan 2021.',
+                impact: 'Penyakit kulit & diare, kerusakan elektronik, lumpuhnya transportasi.',
+                mitigation: 'Normalisasi sungai, tidak membuang sampah sembarangan, pembuatan sumur resapan.',
+                action: 'Matikan aliran listrik rumah, amankan dokumen penting ke lantai atas, segera mengungsi.'
+            },
+            {
+                id: 'longsor',
+                name: 'Tanah Longsor',
+                icon: '⛰️',
+                desc: 'Pergerakan massa batuan, tanah, atau material campuran yang jatuh memerosotkan lereng.',
+                cause: 'Hujan lebat mengikis lereng curam yang gundul tanpa perakaran pohon penahan.',
+                signs: 'Mata air baru bermunculan, retakan di tanah/dinding, pohon atau tiang miring.',
+                areas: 'Wilayah pegunungan dan perbukitan di Jawa, Sumatera, Sulawesi.',
+                cases: 'Longsor Banjarnegara 2014, Longsor Natuna 2023.',
+                impact: 'Rumah tertimbun tanah, jalan tertutup, korban jiwa terperangkap.',
+                mitigation: 'Penanaman pohon berakar dalam (Rerumputan vetiver), pembuatan terasering.',
+                action: 'Jauhi wilayah lereng saat hujan deras berlangsung lama, segera evakuasi jika terdengar gemuruh.'
+            },
+            {
+                id: 'kering',
+                name: 'Kekeringan',
+                icon: '☀️',
+                desc: 'Ketersediaan air yang jauh di bawah kebutuhan hidup, pertanian, dan lingkungan.',
+                cause: 'Musim kemarau panjang yang diperparah oleh fenomena iklim El Niño.',
+                signs: 'Sumur mengering, tanah sawah pecah-pecah, krisis air bersih.',
+                areas: 'Nusa Tenggara Timur (NTT), Nusa Tenggara Barat (NTB), Gunungkidul.',
+                cases: 'Kekeringan El Niño Indonesia 2023.',
+                impact: 'Gagal panen (puso), krisis air minum, risiko kebakaran hutan.',
+                mitigation: 'Pembuatan waduk/embung air, hemat penggunaan air, penghijauan.',
+                action: 'Manfaatkan air bersih secara bijak, tampung air hujan, gunakan varietas tanaman tahan kering.'
+            },
+            {
+                id: 'puting',
+                name: 'Puting Beliung / Cuaca Ekstrem',
+                icon: '🌪️',
+                desc: 'Pusaran angin kencang yang berputar cepat berasal dari awan Cumulonimbus (CB).',
+                cause: 'Perbedaan suhu dan tekanan udara yang sangat kontras saat masa pancaroba.',
+                signs: 'Awan hitam pekat membumbung tinggi, udara terasa sangat panas mendadak dingin, angin kencang.',
+                areas: 'Dataran terbuka di Sumatera, Jawa, Sulawesi.',
+                cases: 'Puting Beliung Rancaekek Bandung 2024.',
+                impact: 'Atap rumah terangkat, pohon tumbang, tiang listrik roboh.',
+                mitigation: 'Pangkas dahan pohon lapuk di sekitar rumah, perkuat atap bangunan.',
+                action: 'Masuk ke dalam bangunan kokoh, jauhi jendela kaca dan pohon besar.'
+            },
+            {
+                id: 'karhutla',
+                name: 'Kebakaran Hutan & Lahan (Karhutla)',
+                icon: '🔥',
+                desc: 'Peristiwa terbakar dan meluasnya api di kawasan hutan dan lahan gambut.',
+                cause: 'Musim kemarau panjang, pembukaan lahan dengan cara dibakar secara ilegal.',
+                signs: 'Asap tebal berbau sangit, jarak pandang berkurang, suhu meningkat.',
+                areas: 'Lahan gambut di Riau, Jambi, Sumsel, Kalimantan Barat, Kalimantan Tengah.',
+                cases: 'Karhutla Riau & Kalimantan 2015 dan 2019.',
+                impact: 'Bencana kabut asap (ISPA), kerusakan keanekaragaman hayati, emisi karbon tinggi.',
+                mitigation: 'Patroli karhutla, larangan keras membakar lahan, pembasahan lahan gambut.',
+                action: 'Gunakan masker N95 saat keluar rumah, kurangi aktivitas di luar ruangan.'
+            }
+        ];
+
+        /* ======================================================== */
+        /* DATA: MATCHING ACTIVITY & SIMULATION & EVALUATION QUIZ   */
+        /* ======================================================== */
+        const matchingData = [
+            { id: 1, text: "Gelombang laut dahsyat akibat gempa dasar laut", options: ["Tsunami", "Banjir", "Puting Beliung"], ans: "Tsunami" },
+            { id: 2, text: "Meluapnya air sungai menggenangi pemukiman", options: ["Kekeringan", "Banjir", "Tanah Longsor"], ans: "Banjir" },
+            { id: 3, text: "Pergerakan tanah dan batuan meluncur turun di lereng curam", options: ["Tanah Longsor", "Karhutla", "Gempa Bumi"], ans: "Tanah Longsor" }
+        ];
+
+        const simulationData = [
+            {
+                q: "Kamu sedang berada di lantai 2 gedung sekolah SMPN 3 Pakuhaji saat gempa bumi guncangan kuat tiba-tiba terjadi. Tindakan terbaikmu adalah...",
+                opts: [
+                    "A. Langsung berlari saling dorong turun tangga menuju luar gedung.",
+                    "B. Berteriak histeris dan melompat keluar dari jendela lantai 2.",
+                    "C. Segera berlutut, berlindung di bawah meja yang kokoh, dan lindungi kepala hingga guncangan berhenti.",
+                    "D. Berdiri diam di tengah ruangan dekat lampu gantung."
+                ],
+                correct: 2,
+                exp: "Benar! Saat terjadi gempa di dalam ruangan, terapkan prinsip DROP, COVER, HOLD ON (Berlutut, Berlindung di bawah meja, Bertahan pegang kaki meja) untuk menghindari timpaan reruntuhan."
+            }
+        ];
+
+        /* ======================================================== */
+        /* DATA: 20 EVALUATION QUIZ QUESTIONS                       */
+        /* ======================================================== */
+        const quizQuestions = [
+            // 10 PG
+            { type: 'pg', q: "1. Peristiwa alam yang berpotensi menimbulkan kerugian harta benda dan korban jiwa dinamakan...", opts: ["A. Gejala atmosfer", "B. Bencana alam", "C. Dinamika cuaca", "D. Erosi tanah"], ans: 1, exp: "Bencana alam adalah peristiwa atau rangkaian peristiwa yang mengancam kehidupan akibat faktor alam/manusia." },
+            { type: 'pg', q: "2. Indonesia terletak di pertemuan 3 lempeng tektonik utama dunia, yaitu...", opts: ["A. Pasifik, Atlantik, India", "B. Eurasia, Indo-Australia, Pasifik", "C. Amerika, Eurasia, Afrika", "D. Nazca, Pasifik, Eurasia"], ans: 1, exp: "Tiga lempeng utama penyebab kerawanan tektonik Indonesia adalah Lempeng Eurasia, Indo-Australia, dan Pasifik." },
+            { type: 'pg', q: "3. Wilayah Indonesia yang dikelilingi deretan gunung api aktif dunia dikenal dengan sebutan...", opts: ["A. Ring of Fire (Cincin Api Pasifik)", "B. Green Belt Zone", "C. Tropical Rain Forest", "D. Ocean Trench"], ans: 0, exp: "Ring of Fire merupakan jalur deretan gunung api aktif di sepanjang Samudra Pasifik." },
+            { type: 'pg', q: "4. Salah satu ciri utama akan terjadinya tsunami di wilayah pantai setelah gempa bumi adalah...", opts: ["A. Hujan deras tiba-tiba", "B. Air laut surut secara mendadak dan jauh", "C. Angin bertiup kencang dari darat", "D. Gelombang laut menjadi sangat tenang"], ans: 1, exp: "Surutnya air laut secara tiba-tiba dan jauh setelah gempa merupakan tanda khas tsunami akan datang." },
+            { type: 'pg', q: "5. Kebakaran hutan dan lahan (Karhutla) paling sering terjadi di Indonesia pada jenis tanah...", opts: ["A. Tanah kapur", "B. Tanah aluvial", "C. Lahan gambut", "D. Tanah pasir"], ans: 2, exp: "Lahan gambut kaya akan bahan organik mudah terbakar hingga ke lapisan dalam tanah saat kemarau." },
+            { type: 'pg', q: "6. Berikut ini yang merupakan langkah mitigasi struktural pencegahan banjir adalah...", opts: ["A. Penyuluhan bencana", "B. Pembangunan waduk dan sumur resapan", "C. Simulasi evakuasi sekolah", "D. Pembuatan peta rawan bencana"], ans: 1, exp: "Mitigasi struktural melibatkan pembangunan fisik seperti waduk, tanggul, dan sumur resapan." },
+            { type: 'pg', q: "7. Tas Siaga Bencana (TSB) sebaiknya diisi dengan barang-barang bertahan hidup minimal untuk...", opts: ["A. 1 hari", "B. 3 hari", "C. 1 bulan", "D. 1 tahun"], ans: 1, exp: "Tas Siaga Bencana disiapkan untuk mencukupi kebutuhan darurat selama minimal 3 hari (72 jam)." },
+            { type: 'pg', q: "8. Lembaga pemerintah Indonesia yang bertugas memberikan informasi prakiraan cuaca, gempa bumi, dan peringatan dini tsunami adalah...", opts: ["A. BNPB", "B. BMKG", "C. BPBD", "D. PVMBG"], ans: 1, exp: "BMKG (Badan Meteorologi, Klimatologi, dan Geofisika) bertugas memantau cuaca, iklim, gempa, dan tsunami." },
+            { type: 'pg', q: "9. Dampak psikologis yang dialami korban penyintas bencana alam adalah...", opts: ["A. Kerusakan jaringan listrik", "B. Trauma dan rasa takut berlebih (PTSD)", "C. Kelangkaan air bersih", "D. Kerusakan fasilitas jalan"], ans: 1, exp: "Dampak psikologis berkaitan dengan kesehatan mental seperti rasa cemas, trauma, dan ketakutan." },
+            { type: 'pg', q: "10. Tindakan yang TIDAK BOLEH dilakukan saat terjadi gempa bumi adalah...", opts: ["A. Berlindung di bawah meja kokoh", "B. Menggunakan lift untuk turun dari gedung tinggi", "C. Menjauhi jendela kaca dan lemari besar", "D. Menuju lapangan terbuka jauh dari tiang listrik"], ans: 1, exp: "Dilarang menggunakan lift saat gempa karena berisiko terjebak akibat listrik padam." },
+
+            // 3 Benar / Salah
+            { type: 'bs', q: "11. [Benar/Salah] Fenomena gempa bumi di tengah samudra yang jauh tanpa penduduk disebut sebagai Bencana Alam.", ans: 'Salah', exp: "Salah. Fenomena tersebut hanya disebut bahaya alam (hazard) karena tidak menimbulkan korban/kerugian pada manusia." },
+            { type: 'bs', q: "12. [Benar/Salah] Menanam pohon bakau (mangrove) di sepanjang pantai dapat mengurangi dampak ancaman gelombang tsunami.", ans: 'Benar', exp: "Benar. Mangrove berfungsi sebagai penahan dan pemecah alami gelombang laut & tsunami." },
+            { type: 'bs', q: "13. [Benar/Salah] Saat berada di dalam ruangan yang terkena banjir, kita harus tetap menyalakan semua sakelar listrik.", ans: 'Salah', exp: "Salah. Aliran listrik harus segera dimatikan untuk mencegah bahaya tersengat arus listrik melalui air." },
+
+            // 3 Menjodohkan
+            { type: 'jodoh', q: "14. Jodohkan Lembaga Bencana dengan Perannya: PVMBG bertugas...", options: ["Penyelenggara penanggulangan bencana nasional", "Pemantauan aktivitas gunung api & gerakan tanah", "Informasi cuaca dan gempa"], ans: "Pemantauan aktivitas gunung api & gerakan tanah", exp: "PVMBG fokus pada pengamatan vulkanologi dan mitigasi bencana geologi." },
+            { type: 'jodoh', q: "15. Jodohkan Jenis Bencana dengan Faktor Utama: Puting Beliung dipicu oleh...", options: ["Awan Cumulonimbus & perbedaan suhu ekstrem", "Pergeseran lempeng tektonik", "Erupsi magma"], ans: "Awan Cumulonimbus & perbedaan suhu ekstrem", exp: "Puting beliung terbentuk dari awan Cumulonimbus saat kondisi atmosfer tidak stabil." },
+            { type: 'jodoh', q: "16. Jodohkan Tindakan Keselamatan: Saat Gunung Api Meletus...", options: ["Lari ke laut", "Gunakan masker pelindung dari abu vulkanik", "Masuk ke dasar lembah"], ans: "Gunakan masker pelindung dari abu vulkanik", exp: "Abu vulkanik sangat berbahaya bagi pernapasan sehingga wajib memakai masker." },
+
+            // 2 Isian Singkat
+            { type: 'isian', q: "17. Jalur gunung api aktif yang membentang mengelilingi Samudra Pasifik dinamakan Cincin Api atau ...", ans: ["ring of fire", "ringoffire"], exp: "Jawaban yang benar adalah 'Ring of Fire'." },
+            { type: 'isian', q: "18. Singkatan dari lembaga Badan Nasional Penanggulangan Bencana adalah ...", ans: ["bnpb"], exp: "Jawaban yang benar adalah 'BNPB'." },
+
+            // 2 Uraian
+            { type: 'uraian', q: "19. (Uraian Case Study) Mengapa penebangan hutan secara liar di wilayah pegunungan dapat memicu terjadinya bencana banjir dan tanah longsor di pemukiman warga bawah? Jelaskan!", exp: "Contoh Jawaban: Pohon di pegunungan memiliki akar yang berfungsi menyerap air hujan dan mengikat tanah. Jika hutan ditebang liar, tanah kehilangan pelindung sehingga air hujan langsung mengikis tanah (longsor) dan mengalir deras ke bawah memicu banjir." },
+            { type: 'uraian', q: "20. (Uraian Mitigasi) Sebutkan 4 barang wajib yang harus dimasukkan ke dalam Tas Siaga Bencana (TSB) keluarga dan jelaskan alasannya!", exp: "Contoh Jawaban: 1. Air & makanan siap saji (untuk konsumsi), 2. Obat/P3K (pertolongan medis), 3. Senter/peluit (penerangan & sinyal minta tolong), 4. Dokumen penting dalam plastik (agar tidak rusak saat evakuasi)." }
+        ];
+
+        /* ======================================================== */
+        /* NAVIGATION & TAB SWITCHING LOGIC                         */
+        /* ======================================================== */
+        function navigateTo(tabId) {
+            document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
+            const target = document.getElementById(tabId);
+            if (target) {
+                target.classList.add('active');
+                state.visitedPages.add(tabId);
+                updateGlobalProgress();
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            }
+
+            // Update Nav Active State
+            document.querySelectorAll('.nav-btn').forEach(btn => btn.classList.remove('bg-blue-100', 'text-brand-blue', 'font-bold'));
+            const activeNavBtn = document.getElementById(`nav-${tabId}`);
+            if (activeNavBtn) activeNavBtn.classList.add('bg-blue-100', 'text-brand-blue', 'font-bold');
+        }
+
+        function updateGlobalProgress() {
+            const totalTabs = 6; // beranda, tujuan, apersepsi, materi, latihan, refleksi
+            const progress = (state.visitedPages.size / totalTabs) * 100;
+            document.getElementById('globalProgressBar').style.width = `${progress}%`;
+            document.getElementById('dashVisited').innerText = `${state.visitedPages.size}/${totalTabs} Menu`;
+        }
+
+        function showSubbab(subId) {
+            document.querySelectorAll('.subbab-content').forEach(el => el.classList.add('hidden'));
+            document.getElementById(subId).classList.remove('hidden');
+
+            document.querySelectorAll('.subnav-btn').forEach(btn => btn.classList.remove('bg-white', 'text-brand-blue'));
+            document.getElementById(`btn-${subId}`).classList.add('bg-white', 'text-brand-blue');
+        }
+
+        /* ======================================================== */
+        /* INITIALIZATION & RENDERING                               */
+        /* ======================================================== */
+        window.onload = function() {
+            renderTujuanCards();
+            renderPretest();
+            renderDisasterTabs();
+            renderMatchingActivity();
+            renderSimulation();
+            renderSampleQuestions();
+            renderQuizQuestion(state.currentQuizIndex);
+            updateGlobalProgress();
+        };
+
+        /* Render Tujuan Cards */
+        function renderTujuanCards() {
+            const container = document.getElementById('tujuanCardsContainer');
+            container.innerHTML = tujuanData.map(item => `
+                <div class="flip-card h-48 cursor-pointer" onclick="this.classList.toggle('flipped')">
+                    <div class="flip-card-inner relative w-full h-full rounded-2xl shadow-sm border border-slate-200 bg-white">
+                        <div class="flip-card-front p-5 flex flex-col justify-between">
+                            <div>
+                                <span class="text-xs font-bold text-red-600 bg-red-50 px-2.5 py-1 rounded-md">Target ${item.id}</span>
+                                <h4 class="font-bold text-slate-800 text-sm mt-3">${item.title}</h4>
+                            </div>
+                            <span class="text-[11px] text-slate-400 font-medium flex items-center gap-1">Klik untuk balik kartu <i class="fa-solid fa-rotate"></i></span>
+                        </div>
+                        <div class="flip-card-back bg-gradient-to-br from-red-600 to-rose-700 text-white p-5 rounded-2xl flex flex-col justify-center">
+                            <h5 class="font-bold text-xs mb-2">Indikator Capaian:</h5>
+                            <p class="text-xs text-red-100 leading-relaxed">${item.desc}</p>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        /* Render Pretest */
+        function renderPretest() {
+            const container = document.getElementById('pretestContainer');
+            container.innerHTML = pretestQuestions.map((q, idx) => `
+                <div class="p-4 bg-slate-50 rounded-2xl border border-slate-200 space-y-2">
+                    <p class="font-bold text-xs text-slate-800">${idx + 1}. ${q.q}</p>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs">
+                        ${q.options.map((opt, oIdx) => `
+                            <label class="p-2.5 bg-white border border-slate-200 rounded-xl flex items-center gap-2 cursor-pointer hover:bg-amber-50 transition">
+                                <input type="radio" name="preQ_${q.id}" value="${oIdx}" class="text-amber-600">
+                                <span>${opt}</span>
+                            </label>
+                        `).join('')}
+                    </div>
+                    <div id="preFeedback_${q.id}" class="hidden text-xs p-2 rounded-lg font-medium"></div>
+                </div>
+            `).join('');
+        }
+
+        function checkPretest() {
+            let correct = 0;
+            pretestQuestions.forEach(q => {
+                const selected = document.querySelector(`input[name="preQ_${q.id}"]:checked`);
+                const fb = document.getElementById(`preFeedback_${q.id}`);
+                fb.classList.remove('hidden', 'bg-green-100', 'text-green-800', 'bg-red-100', 'text-red-800');
+                if (selected) {
+                    if (parseInt(selected.value) === q.ans) {
+                        correct++;
+                        fb.classList.add('bg-green-100', 'text-green-800');
+                        fb.innerText = "✓ Benar! Pengetahuan awalmu sangat baik.";
+                    } else {
+                        fb.classList.add('bg-red-100', 'text-red-800');
+                        fb.innerText = `✗ Belum tepat. Jawaban benar: ${q.options[q.ans]}`;
+                    }
+                } else {
+                    fb.classList.add('bg-red-100', 'text-red-800');
+                    fb.innerText = "⚠️ Kamu belum memilih jawaban.";
+                }
+            });
+            state.pretestDone = true;
+            state.pretestScore = (correct / pretestQuestions.length) * 100;
+            document.getElementById('pretestBadge').className = "px-3 py-1 bg-green-100 text-green-800 rounded-full text-xs font-bold";
+            document.getElementById('pretestBadge').innerText = `Selesai: Skor ${state.pretestScore}`;
+            document.getElementById('dashPretest').innerText = `Selesai (${state.pretestScore}/100)`;
+        }
+
+        /* Render 8 Disasters Subbab C */
+        function renderDisasterTabs() {
+            const header = document.getElementById('disasterTabHeader');
+            header.innerHTML = disasterData.map((d, i) => `
+                <button onclick="selectDisaster('${d.id}')" id="disBtn_${d.id}" class="dis-btn px-3 py-2 rounded-xl text-xs font-bold transition flex items-center gap-1.5 ${i===0 ? 'bg-brand-green text-white shadow' : 'bg-slate-100 text-slate-700 hover:bg-slate-200'}">
+                    <span>${d.icon}</span> <span>${d.name}</span>
+                </button>
+            `).join('');
+            selectDisaster(disasterData[0].id);
+        }
+
+        function selectDisaster(id) {
+            const d = disasterData.find(item => item.id === id);
+            if (!d) return;
+
+            document.querySelectorAll('.dis-btn').forEach(b => b.className = 'dis-btn px-3 py-2 rounded-xl text-xs font-bold transition flex items-center gap-1.5 bg-slate-100 text-slate-700 hover:bg-slate-200');
+            const activeBtn = document.getElementById(`disBtn_${id}`);
+            if (activeBtn) activeBtn.className = 'dis-btn px-3 py-2 rounded-xl text-xs font-bold transition flex items-center gap-1.5 bg-brand-green text-white shadow';
+
+            const container = document.getElementById('disasterDetailContainer');
+            container.innerHTML = `
+                <div class="space-y-4">
+                    <div class="flex items-center gap-3 border-b pb-3">
+                        <span class="text-4xl">${d.icon}</span>
+                        <div>
+                            <h4 class="text-xl font-extrabold text-slate-800">${d.name}</h4>
+                            <p class="text-xs text-slate-500">${d.desc}</p>
+                        </div>
+                    </div>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs">
+                        <div class="p-3 bg-white rounded-xl border"><strong>Penyebab & Proses:</strong> <p class="text-slate-600 mt-1">${d.cause}</p></div>
+                        <div class="p-3 bg-white rounded-xl border"><strong>Tanda & Ciri-Ciri:</strong> <p class="text-slate-600 mt-1">${d.signs}</p></div>
+                        <div class="p-3 bg-white rounded-xl border"><strong>Wilayah Potensi di Indonesia:</strong> <p class="text-slate-600 mt-1">${d.areas}</p></div>
+                        <div class="p-3 bg-white rounded-xl border"><strong>Contoh Kejadian Nyata:</strong> <p class="text-slate-600 mt-1">${d.cases}</p></div>
+                        <div class="p-3 bg-white rounded-xl border"><strong>Dampak Utama:</strong> <p class="text-slate-600 mt-1">${d.impact}</p></div>
+                        <div class="p-3 bg-white rounded-xl border"><strong>Upaya Pencegahan/Mitigasi:</strong> <p class="text-slate-600 mt-1">${d.mitigation}</p></div>
+                    </div>
+                    <div class="p-3 bg-amber-50 border border-amber-200 rounded-xl text-xs text-amber-900 font-medium">
+                        <strong>Langkah Keselamatan Darurat:</strong> ${d.action}
+                    </div>
+                </div>
+            `;
+        }
+
+        /* Render Matching Activity */
+        function renderMatchingActivity() {
+            const container = document.getElementById('matchingActivityContainer');
+            container.innerHTML = matchingData.map(item => `
+                <div class="p-3 bg-white rounded-2xl border flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-xs">
+                    <span class="font-medium text-slate-700">${item.id}. ${item.text}</span>
+                    <select id="matchSel_${item.id}" onchange="checkMatching(${item.id}, '${item.ans}')" class="p-2 bg-slate-50 border border-slate-300 rounded-xl text-xs font-bold text-brand-blue focus:outline-none">
+                        <option value="">-- Pilih Bencana --</option>
+                        ${item.options.map(opt => `<option value="${opt}">${opt}</option>`).join('')}
+                    </select>
+                </div>
+            `).join('');
+        }
+
+        function checkMatching(id, correctAns) {
+            const sel = document.getElementById(`matchSel_${id}`);
+            if (sel.value === correctAns) {
+                sel.className = "p-2 bg-green-100 border border-green-400 rounded-xl text-xs font-bold text-green-800";
+            } else if (sel.value !== "") {
+                sel.className = "p-2 bg-red-100 border border-red-400 rounded-xl text-xs font-bold text-red-800";
+            }
+        }
+
+        /* Render Simulation */
+        function renderSimulation() {
+            const box = document.getElementById('simulationBox');
+            const sim = simulationData[0];
+            box.innerHTML = `
+                <p class="text-xs font-semibold text-slate-200 leading-relaxed">${sim.q}</p>
+                <div class="space-y-2">
+                    ${sim.opts.map((opt, i) => `
+                        <button onclick="answerSimulation(${i})" class="w-full text-left p-3 rounded-xl bg-slate-700 hover:bg-slate-600 transition text-xs text-slate-100 font-medium border border-slate-600">
+                            ${opt}
+                        </button>
+                    `).join('')}
+                </div>
+                <div id="simFeedback" class="hidden p-3 rounded-xl text-xs font-medium"></div>
+            `;
+        }
+
+        function answerSimulation(idx) {
+            const fb = document.getElementById('simFeedback');
+            fb.classList.remove('hidden', 'bg-green-900/80', 'text-green-200', 'bg-red-900/80', 'text-red-200');
+            if (idx === simulationData[0].correct) {
+                fb.classList.add('bg-green-900/80', 'text-green-200');
+                fb.innerText = simulationData[0].exp;
+            } else {
+                fb.classList.add('bg-red-900/80', 'text-red-200');
+                fb.innerText = "❌ Pilihan ini kurang tepat dan berisiko cedera! Ingat prinsip DROP, COVER, HOLD ON.";
+            }
+        }
+
+        /* Render Sample Questions in Subbab F */
+        function renderSampleQuestions() {
+            const samples = [
+                { title: "Contoh Soal Subbab A (Pengertian)", q: "Apakah fenomena erupsi gunung api di pulau kosong tak berpenghuni termasuk bencana alam?", ans: "Bukan bencana alam, melainkan bahaya alam (hazard). Sebab bencana baru terjadi jika menimbulkan dampak kerugian pada kehidupan manusia." },
+                { title: "Contoh Soal Subbab B (Faktor Geografis)", q: "Sebutkan 3 lempeng tektonik yang saling bertemu di wilayah Indonesia!", ans: "Lempeng Eurasia, Lempeng Indo-Australia, dan Lempeng Pasifik." },
+                { title: "Contoh Soal Subbab E (Mitigasi)", q: "Sebutkan 3 benda penting yang wajib disiapkan di dalam Tas Siaga Bencana!", ans: "Dokumen penting (KK/Ijazah), air minum & makanan tahan lama, serta kotak P3K / obat-obatan." }
+            ];
+
+            const container = document.getElementById('subbabSampleQuestions');
+            container.innerHTML = samples.map((s, i) => `
+                <div class="p-4 bg-slate-50 rounded-2xl border border-slate-200 space-y-2 text-xs">
+                    <span class="font-bold text-brand-blue uppercase">${s.title}</span>
+                    <p class="font-bold text-slate-800">${s.q}</p>
+                    <button onclick="document.getElementById('sampleAns_${i}').classList.toggle('hidden')" class="px-3 py-1 bg-slate-200 hover:bg-slate-300 font-semibold rounded-lg text-[11px] text-slate-700">
+                        Lihat Pembahasan & Kunci
+                    </button>
+                    <div id="sampleAns_${i}" class="hidden p-3 bg-blue-50 border border-blue-200 rounded-xl text-slate-700 leading-relaxed">
+                        <strong>Kunci & Pembahasan:</strong> ${s.ans}
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        /* ======================================================== */
+        /* EVALUATION QUIZ ENGINE (20 QUESTIONS)                    */
+        /* ======================================================== */
+        function renderQuizQuestion(idx) {
+            const q = quizQuestions[idx];
+            const container = document.getElementById('quizQuestionContainer');
+            document.getElementById('quizProgressText').innerText = `Soal ${idx + 1} dari ${quizQuestions.length}`;
+            document.getElementById('quizProgressBar').style.width = `${((idx + 1) / quizQuestions.length) * 100}%`;
+
+            let html = `<div class="space-y-4 text-xs">
+                <div class="flex justify-between items-center">
+                    <span class="px-2.5 py-1 bg-brand-blue/10 text-brand-blue rounded-lg font-bold">Tipe: ${q.type.toUpperCase()}</span>
+                    <span class="text-slate-400">No. ${idx + 1}</span>
+                </div>
+                <p class="font-bold text-slate-800 text-sm leading-relaxed">${q.q}</p>`;
+
+            if (q.type === 'pg') {
+                html += `<div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                    ${q.opts.map((opt, oIdx) => `
+                        <label class="p-3 bg-white border border-slate-200 rounded-xl flex items-center gap-2 cursor-pointer hover:bg-emerald-50 transition">
+                            <input type="radio" name="quizChoice" value="${oIdx}" ${state.quizAnswers[idx] == oIdx ? 'checked' : ''} onchange="saveQuizAnswer(${idx}, ${oIdx})" class="text-emerald-600">
+                            <span class="font-medium text-slate-700">${opt}</span>
+                        </label>
+                    `).join('')}
+                </div>`;
+            } else if (q.type === 'bs') {
+                html += `<div class="flex gap-4">
+                    <label class="p-3 bg-white border border-slate-200 rounded-xl flex items-center gap-2 cursor-pointer hover:bg-emerald-50 transition font-bold text-green-700">
+                        <input type="radio" name="quizChoice" value="Benar" ${state.quizAnswers[idx] === 'Benar' ? 'checked' : ''} onchange="saveQuizAnswer(${idx}, 'Benar')" class="text-emerald-600"> Benar
+                    </label>
+                    <label class="p-3 bg-white border border-slate-200 rounded-xl flex items-center gap-2 cursor-pointer hover:bg-emerald-50 transition font-bold text-red-700">
+                        <input type="radio" name="quizChoice" value="Salah" ${state.quizAnswers[idx] === 'Salah' ? 'checked' : ''} onchange="saveQuizAnswer(${idx}, 'Salah')" class="text-emerald-600"> Salah
+                    </label>
+                </div>`;
+            } else if (q.type === 'jodoh') {
+                html += `<div class="space-y-2">
+                    <p class="text-slate-500">Pilih Pasangan Paling Tepat:</p>
+                    <select onchange="saveQuizAnswer(${idx}, this.value)" class="w-full p-3 bg-white border border-slate-300 rounded-xl font-bold text-brand-blue text-xs">
+                        <option value="">-- Pilih Pasangan --</option>
+                        ${q.options.map(opt => `<option value="${opt}" ${state.quizAnswers[idx] === opt ? 'selected' : ''}>${opt}</option>`).join('')}
+                    </select>
+                </div>`;
+            } else if (q.type === 'isian') {
+                html += `<div class="space-y-2">
+                    <input type="text" value="${state.quizAnswers[idx] || ''}" oninput="saveQuizAnswer(${idx}, this.value)" placeholder="Tuliskan jawaban singkatmu di sini..." class="w-full p-3 bg-white border border-slate-300 rounded-xl text-xs font-bold text-slate-800 focus:outline-none focus:ring-2 focus:ring-brand-green">
+                </div>`;
+            } else if (q.type === 'uraian') {
+                html += `<div class="space-y-2">
+                    <textarea rows="3" oninput="saveQuizAnswer(${idx}, this.value)" placeholder="Tuliskan analisis jawaban uraianmu..." class="w-full p-3 bg-white border border-slate-300 rounded-xl text-xs text-slate-800 focus:outline-none focus:ring-2 focus:ring-brand-green">${state.quizAnswers[idx] || ''}</textarea>
+                </div>`;
+            }
+
+            html += `</div>`;
+            container.innerHTML = html;
+
+            document.getElementById('btnQuizPrev').style.visibility = idx === 0 ? 'hidden' : 'visible';
+            document.getElementById('btnQuizNext').style.display = idx === quizQuestions.length - 1 ? 'none' : 'inline-block';
+            document.getElementById('btnQuizSubmit').style.display = idx === quizQuestions.length - 1 ? 'inline-block' : 'none';
+        }
+
+        function saveQuizAnswer(qIdx, val) {
+            state.quizAnswers[qIdx] = val;
+            const count = Object.keys(state.quizAnswers).filter(k => state.quizAnswers[k] !== "").length;
+            document.getElementById('quizAnsweredCount').innerText = `Terjawab: ${count}/${quizQuestions.length}`;
+        }
+
+        function prevQuizQuestion() {
+            if (state.currentQuizIndex > 0) {
+                state.currentQuizIndex--;
+                renderQuizQuestion(state.currentQuizIndex);
+            }
+        }
+
+        function nextQuizQuestion() {
+            if (state.currentQuizIndex < quizQuestions.length - 1) {
+                state.currentQuizIndex++;
+                renderQuizQuestion(state.currentQuizIndex);
+            }
+        }
+
+        function submitQuiz() {
+            let correctCount = 0;
+            let wrongCount = 0;
+            const objectiveTotal = 18; // 18 objective questions (PG, BS, Jodoh, Isian)
+
+            quizQuestions.slice(0, 18).forEach((q, i) => {
+                const userAns = state.quizAnswers[i];
+                if (q.type === 'pg') {
+                    if (parseInt(userAns) === q.ans) correctCount++; else wrongCount++;
+                } else if (q.type === 'bs') {
+                    if (userAns === q.ans) correctCount++; else wrongCount++;
+                } else if (q.type === 'jodoh') {
+                    if (userAns === q.ans) correctCount++; else wrongCount++;
+                } else if (q.type === 'isian') {
+                    const cleanAns = (userAns || '').toString().toLowerCase().trim();
+                    if (q.ans.includes(cleanAns)) correctCount++; else wrongCount++;
+                }
+            });
+
+            const score = Math.round((correctCount / objectiveTotal) * 100);
+            state.quizDone = true;
+            state.quizScore = score;
+
+            document.getElementById('resScore').innerText = score;
+            document.getElementById('resCorrect').innerText = correctCount;
+            document.getElementById('resWrong').innerText = wrongCount;
+
+            let cat = "Perlu Belajar Lagi";
+            if (score >= 85) cat = "Sangat Baik (Sangat Tuntas)";
+            else if (score >= 70) cat = "Baik (Tuntas)";
+            else if (score >= 60) cat = "Cukup (Perlu Latihan)";
+            document.getElementById('resCategory').innerText = cat;
+
+            document.getElementById('quizResultCard').classList.remove('hidden');
+            document.getElementById('dashQuiz').innerText = `Skor: ${score} (${cat})`;
+            window.scrollTo({ top: document.getElementById('quizResultCard').offsetTop - 100, behavior: 'smooth' });
+        }
+
+        function restartQuiz() {
+            state.quizAnswers = {};
+            state.currentQuizIndex = 0;
+            document.getElementById('quizAnsweredCount').innerText = `Terjawab: 0/${quizQuestions.length}`;
+            document.getElementById('quizResultCard').classList.add('hidden');
+            renderQuizQuestion(0);
+        }
+
+        function toggleQuizDiscussion() {
+            const box = document.getElementById('quizDiscussionBox');
+            box.classList.toggle('hidden');
+            if (!box.classList.contains('hidden')) {
+                const container = document.getElementById('quizDiscussionContainer');
+                container.innerHTML = quizQuestions.map((q, idx) => `
+                    <div class="p-3 bg-slate-50 border rounded-xl text-xs space-y-1">
+                        <p class="font-bold text-slate-800">${q.q}</p>
+                        <p class="text-green-700 font-semibold">Kunci / Pembahasan: ${q.exp}</p>
+                    </div>
+                `).join('');
+            }
+        }
+
+        /* ======================================================== */
+        /* REFLECTION & DATA PERSISTENCE                            */
+        /* ======================================================== */
+        function saveReflection() {
+            const level = document.querySelector('input[name="refLevel"]:checked').value;
+            const q1 = document.getElementById('refQ1').value;
+            const q2 = document.getElementById('refQ2').value;
+
+            const refData = {
+                level, q1, q2,
+                timestamp: new Date().toLocaleString('id-ID')
+            };
+
+            localStorage.setItem('smpn3_refleksi', JSON.stringify(refData));
+            state.reflectionSaved = true;
+
+            const sumBox = document.getElementById('reflectionSummaryBox');
+            sumBox.classList.remove('hidden');
+            document.getElementById('refSummaryText').innerText = `Tingkat Pemahaman: ${level}. Pengetahuan baru tersimpan dengan sukses pada ${refData.timestamp}.`;
+            document.getElementById('dashRef').innerText = `Disimpan (${level})`;
+        }
+
+        function syncToGoogleSheets() {
+            alert("Fitur Integrasi Google Apps Script:\nData refleksi dan nilai siswa siap dikirimkan ke Google Sheets Guru SMPN 3 Pakuhaji jika Web App URL Apps Script telah dikonfigurasi.");
+        }
+
+        /* ======================================================== */
+        /* HELPER MODALS & PRESENTER MODE                           */
+        /* ======================================================== */
+        function openModal(id) { document.getElementById(id).classList.remove('hidden'); }
+        function closeModal(id) { document.getElementById(id).classList.add('hidden'); }
+
+        function togglePresenterMode() {
+            document.body.classList.toggle('bg-white');
+            alert("Mode Presentasi Guru diaktifkan! Tampilan disesuaikan untuk kenyamanan layar proyektor.");
+        }
+    </script>
+</body>
+</html>
